@@ -217,9 +217,20 @@ function InspectionDetail() {
         </div>
 
         <aside className="surface-panel overflow-hidden">
-          <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">Evidence image</h2>
-          {imageUrl ? (
-            <img src={imageUrl} alt="Scanned package label" className="w-full object-contain" />
+          <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">
+            Evidence images {imageUrls?.length ? `(${imageUrls.length})` : ""}
+          </h2>
+          {imageUrls?.length ? (
+            <ul className="divide-y divide-border">
+              {imageUrls.map((url, i) => (
+                <li key={url} className="relative">
+                  <span className="absolute left-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs font-semibold text-foreground">
+                    {i + 1}
+                  </span>
+                  <img src={url} alt={`Scanned package label ${i + 1}`} className="w-full object-contain" />
+                </li>
+              ))}
+            </ul>
           ) : (
             <p className="px-5 py-8 text-sm text-muted-foreground">Image unavailable.</p>
           )}
