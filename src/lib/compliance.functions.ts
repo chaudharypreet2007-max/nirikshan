@@ -227,12 +227,12 @@ Return JSON with this exact shape:
         latitude: data.latitude ?? null,
         longitude: data.longitude ?? null,
         location_label: data.locationLabel ?? null,
-        image_path: data.imagePath,
+        image_path: data.imagePaths[0]!,
         image_quality_score: clamp(ai.image_quality_score ?? 0),
         compliance_score: score,
         status,
         summary: ai.summary ?? null,
-        ai_raw: JSON.parse(JSON.stringify(ai)),
+        ai_raw: JSON.parse(JSON.stringify({ ...ai, image_paths: data.imagePaths })),
       })
       .select("id")
       .single();
