@@ -297,12 +297,13 @@ function Scan() {
                 value={locationLabel}
                 onChange={(e) => setLocationLabel(e.target.value)}
               />
-              <Button type="button" variant="outline" className="h-11 shrink-0" onClick={captureLocation}>
-                <MapPin className="size-4" /> GPS
+              <Button type="button" variant="outline" className="h-11 shrink-0" disabled={locating} onClick={captureLocation}>
+                {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />} GPS
               </Button>
             </div>
             {coords ? (
               <p className="text-xs text-muted-foreground">
+                {locationLabel ? <span className="font-medium text-foreground">{locationLabel} · </span> : null}
                 {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
               </p>
             ) : null}
