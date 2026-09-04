@@ -48,7 +48,7 @@ function InspectionDetail() {
       const { data, error } = await supabase
         .from("inspections")
         .select(
-          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
+          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, ai_raw, products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
         )
         .eq("id", inspectionId)
         .maybeSingle();
@@ -58,14 +58,26 @@ function InspectionDetail() {
   });
 
 
-  const { data: imageUrl } = useQuery({
-    queryKey: ["inspection-image", data?.image_path],
-    enabled: !!data?.image_path,
+  const imagePaths: string[] = (() => {
+    const raw = data?.ai_raw as { image_paths?: unknown } | null | undefined;
+    const paths = Array.isArray(raw?.image_paths) ? (raw!.image_paths as string[]) : [];
+    if (paths.length) return paths;
+    return data?.image_path ? [data.image_path as string] : [];
+  })();
+
+  const { data: imageUrls } = useQuery({
+    queryKey: ["inspection-images", imagePaths],
+    enabled: imagePaths.length > 0,
     queryFn: async () => {
-      const { data: signed } = await supabase.storage
-        .from("label-images")
-        .createSignedUrl(data!.image_path as string, 3600);
-      return signed?.signedUrl ?? null;
+      const urls = await Promise.all(
+        imagePaths.map(async (path) => {
+          const { data: signed } = await supabase.storage
+            .from("label-images")
+            .createSignedUrl(path, 3600);
+          return signed?.signedUrl ?? null;
+        }),
+      );
+      return urls.filter((u): u is string => !!u);
     },
   });
 
@@ -205,9 +217,20 @@ function InspectionDetail() {
         </div>
 
         <aside className="surface-panel overflow-hidden">
-          <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">Evidence image</h2>
-          {imageUrl ? (
-            <img src={imageUrl} alt="Scanned package label" className="w-full object-contain" />
+          <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">
+            Evidence images {imageUrls?.length ? `(${imageUrls.length})` : ""}
+          </h2>
+          {imageUrls?.length ? (
+            <ul className="divide-y divide-border">
+              {imageUrls.map((url, i) => (
+                <li key={url} className="relative">
+                  <span className="absolute left-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs font-semibold text-foreground">
+                    {i + 1}
+                  </span>
+                  <img src={url} alt={`Scanned package label ${i + 1}`} className="w-full object-contain" />
+                </li>
+              ))}
+            </ul>
           ) : (
             <p className="px-5 py-8 text-sm text-muted-foreground">Image unavailable.</p>
           )}
