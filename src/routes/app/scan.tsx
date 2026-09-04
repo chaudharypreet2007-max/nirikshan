@@ -148,24 +148,62 @@ function Scan() {
 
       <form className="grid gap-6 lg:grid-cols-2" onSubmit={submit}>
         <section className="surface-panel p-5">
-          <h2 className="font-display text-base font-semibold">Label image</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-base font-semibold">Label images</h2>
+            <span className="text-xs text-muted-foreground">
+              {files.length}/{MAX_IMAGES} attached
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add front, back, side and close-up shots of the same package — more angles give a more accurate check.
+          </p>
+
           <div className="mt-4 overflow-hidden rounded-xl border border-dashed border-border bg-muted">
-            {preview ? (
-              <img src={preview} alt="Selected package label" className="max-h-80 w-full object-contain" />
+            {files.length ? (
+              <div className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3">
+                {files.map((f, i) => (
+                  <div key={f.preview} className="relative overflow-hidden rounded-lg border border-border bg-background">
+                    <img src={f.preview} alt={`Package label view ${i + 1}`} className="h-28 w-full object-cover" />
+                    <span className="absolute left-1 top-1 rounded bg-background/85 px-1.5 py-0.5 text-[10px] font-medium">
+                      {i + 1}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Remove image ${i + 1}`}
+                      onClick={() => removeAt(i)}
+                      className="absolute right-1 top-1 rounded-full bg-background/85 p-1 text-foreground hover:bg-background"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="flex h-56 flex-col items-center justify-center gap-2 text-muted-foreground">
                 <Camera className="size-8" aria-hidden="true" />
-                <p className="text-sm">No image selected</p>
+                <p className="text-sm">No images selected</p>
               </div>
             )}
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Button type="button" variant="secondary" className="h-11" onClick={() => cameraRef.current?.click()}>
+            <Button
+              type="button"
+              variant="secondary"
+              className="h-11"
+              disabled={files.length >= MAX_IMAGES}
+              onClick={() => cameraRef.current?.click()}
+            >
               <Camera className="size-4" /> Take photo
             </Button>
-            <Button type="button" variant="outline" className="h-11" onClick={() => fileRef.current?.click()}>
-              <Upload className="size-4" /> Upload image
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11"
+              disabled={files.length >= MAX_IMAGES}
+              onClick={() => fileRef.current?.click()}
+            >
+              <Upload className="size-4" /> Upload images
             </Button>
           </div>
           <input
@@ -174,14 +212,21 @@ function Scan() {
             accept="image/*"
             capture="environment"
             className="hidden"
-            onChange={(e) => pick(e.target.files?.[0])}
+            onChange={(e) => {
+              pick(e.target.files);
+              e.target.value = "";
+            }}
           />
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
+            multiple
             className="hidden"
-            onChange={(e) => pick(e.target.files?.[0])}
+            onChange={(e) => {
+              pick(e.target.files);
+              e.target.value = "";
+            }}
           />
         </section>
 
