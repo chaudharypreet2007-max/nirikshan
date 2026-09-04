@@ -102,7 +102,7 @@ export const analyzeLabel = createServerFn({ method: "POST" })
       .join("\n");
 
     const systemPrompt = `You are Nirikshan AI, a Legal Metrology (Packaged Commodities) Rules, 2011 compliance analyst for India.
-Analyse the packaged commodity label image and report ONLY what is visually verifiable. Never invent text you cannot read.
+You may receive MULTIPLE photographs of the SAME package (front, back, side, close-ups). Treat them as one package: merge evidence across all images, and mark a declaration "present" if it is readable in ANY image. Report ONLY what is visually verifiable. Never invent text you cannot read. In evidence, mention which image (1-based index) the proof came from.
 Applicable rules:
 ${rulesText}
 
@@ -146,8 +146,8 @@ Return JSON with this exact shape:
           {
             role: "user",
             content: [
-              { type: "text", text: userPrompt },
-              { type: "image_url", image_url: { url: dataUrl } },
+              { type: "text", text: `${userPrompt}\n\nNumber of images of this package: ${dataUrls.length}.` },
+              ...dataUrls.map((url) => ({ type: "image_url" as const, image_url: { url } })),
             ],
           },
         ],
