@@ -10,33 +10,137 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/app'
+import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
+import { Route as AppRulesRouteImport } from './routes/app/rules'
+import { Route as AppScanRouteImport } from './routes/app/scan'
+import { Route as AuthCompanyRouteImport } from './routes/auth.company'
+import { Route as AuthGovernmentRouteImport } from './routes/auth.government'
+import { Route as AppInspectionsIndexRouteImport } from './routes/app/inspections/index'
+import { Route as AppInspectionsInspectionIdRouteImport } from './routes/app/inspections/$inspectionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRulesRoute = AppRulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppScanRoute = AppScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => AppRoute,
+} as any)
+const AuthCompanyRoute = AuthCompanyRouteImport.update({
+  id: '/auth/company',
+  path: '/auth/company',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthGovernmentRoute = AuthGovernmentRouteImport.update({
+  id: '/auth/government',
+  path: '/auth/government',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppInspectionsIndexRoute = AppInspectionsIndexRouteImport.update({
+  id: '/inspections/',
+  path: '/inspections/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppInspectionsInspectionIdRoute =
+  AppInspectionsInspectionIdRouteImport.update({
+    id: '/inspections/$inspectionId',
+    path: '/inspections/$inspectionId',
+    getParentRoute: () => AppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/rules': typeof AppRulesRoute
+  '/app/scan': typeof AppScanRoute
+  '/auth/company': typeof AuthCompanyRoute
+  '/auth/government': typeof AuthGovernmentRoute
+  '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
+  '/app/inspections/': typeof AppInspectionsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/rules': typeof AppRulesRoute
+  '/app/scan': typeof AppScanRoute
+  '/auth/company': typeof AuthCompanyRoute
+  '/auth/government': typeof AuthGovernmentRoute
+  '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
+  '/app/inspections': typeof AppInspectionsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/rules': typeof AppRulesRoute
+  '/app/scan': typeof AppScanRoute
+  '/auth/company': typeof AuthCompanyRoute
+  '/auth/government': typeof AuthGovernmentRoute
+  '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
+  '/app/inspections/': typeof AppInspectionsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/app/dashboard'
+    | '/app/rules'
+    | '/app/scan'
+    | '/auth/company'
+    | '/auth/government'
+    | '/app/inspections/$inspectionId'
+    | '/app/inspections/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app'
+    | '/app/dashboard'
+    | '/app/rules'
+    | '/app/scan'
+    | '/auth/company'
+    | '/auth/government'
+    | '/app/inspections/$inspectionId'
+    | '/app/inspections'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/app/dashboard'
+    | '/app/rules'
+    | '/app/scan'
+    | '/auth/company'
+    | '/auth/government'
+    | '/app/inspections/$inspectionId'
+    | '/app/inspections/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  AuthCompanyRoute: typeof AuthCompanyRoute
+  AuthGovernmentRoute: typeof AuthGovernmentRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +152,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/dashboard': {
+      id: '/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/rules': {
+      id: '/app/rules'
+      path: '/rules'
+      fullPath: '/app/rules'
+      preLoaderRoute: typeof AppRulesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/scan': {
+      id: '/app/scan'
+      path: '/scan'
+      fullPath: '/app/scan'
+      preLoaderRoute: typeof AppScanRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/auth/company': {
+      id: '/auth/company'
+      path: '/auth/company'
+      fullPath: '/auth/company'
+      preLoaderRoute: typeof AuthCompanyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/government': {
+      id: '/auth/government'
+      path: '/auth/government'
+      fullPath: '/auth/government'
+      preLoaderRoute: typeof AuthGovernmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app/inspections/': {
+      id: '/app/inspections/'
+      path: '/inspections'
+      fullPath: '/app/inspections/'
+      preLoaderRoute: typeof AppInspectionsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/inspections/$inspectionId': {
+      id: '/app/inspections/$inspectionId'
+      path: '/inspections/$inspectionId'
+      fullPath: '/app/inspections/$inspectionId'
+      preLoaderRoute: typeof AppInspectionsInspectionIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppRulesRoute: typeof AppRulesRoute
+  AppScanRoute: typeof AppScanRoute
+  AppInspectionsInspectionIdRoute: typeof AppInspectionsInspectionIdRoute
+  AppInspectionsIndexRoute: typeof AppInspectionsIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppDashboardRoute: AppDashboardRoute,
+  AppRulesRoute: AppRulesRoute,
+  AppScanRoute: AppScanRoute,
+  AppInspectionsInspectionIdRoute: AppInspectionsInspectionIdRoute,
+  AppInspectionsIndexRoute: AppInspectionsIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  AuthCompanyRoute: AuthCompanyRoute,
+  AuthGovernmentRoute: AuthGovernmentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
