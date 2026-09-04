@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { Camera, Upload, MapPin, Loader2 } from "lucide-react";
+import { Camera, Upload, MapPin, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { analyzeLabel } from "@/lib/compliance.functions";
 import { useAuth } from "@/lib/auth";
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/app/scan")({
 
 const CATEGORIES = ["Food & beverages", "Cosmetics", "Household", "Electronics", "Apparel", "Pharmaceutical", "Other"];
 const PACKAGE_TYPES = ["Retail pack", "Wholesale pack", "Multi-piece pack", "Combination pack", "E-commerce listing"];
+const MAX_IMAGES = 6;
 
 function Scan() {
   const navigate = useNavigate();
@@ -279,7 +280,7 @@ function Scan() {
           <Button type="submit" className="h-12 w-full" disabled={busy}>
             {busy ? (
               <>
-                <Loader2 className="size-4 animate-spin" /> Analysing label…
+                <Loader2 className="size-4 animate-spin" /> Analysing {files.length} image{files.length > 1 ? "s" : ""}…
               </>
             ) : (
               "Run compliance check"
