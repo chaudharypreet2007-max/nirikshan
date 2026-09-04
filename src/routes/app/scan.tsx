@@ -54,11 +54,27 @@ function Scan() {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const pick = (f: File | undefined) => {
-    if (!f) return;
-    setFile(f);
-    setPreview(URL.createObjectURL(f));
+  const pick = (list: FileList | null) => {
+    const picked = Array.from(list ?? []);
+    if (!picked.length) return;
+    setFiles((prev) => {
+      const room = MAX_IMAGES - prev.length;
+      if (room <= 0) {
+        toast.error(`You can attach up to ${MAX_IMAGES} images per package.`);
+        return prev;
+      }
+      if (picked.length > room) toast.info(`Only ${room} more image(s) added — limit is ${MAX_IMAGES}.`);
+      return [...prev, ...picked.slice(0, room).map((f) => ({ file: f, preview: URL.createObjectURL(f) }))];
+    });
   };
+
+  const removeAt = (i: number) =>
+    setFiles((prev) => {
+      const next = [...prev];
+      const [gone] = next.splice(i, 1);
+      if (gone) URL.revokeObjectURL(gone.preview);
+      return next;
+    });
 
   const captureLocation = () => {
     if (!navigator.geolocation) {
