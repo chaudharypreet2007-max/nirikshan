@@ -146,7 +146,13 @@ export function AuthPortal({ portal }: { portal: Portal }) {
 
             <TabsContent value="signin">
               <form className="space-y-4" onSubmit={signIn}>
-                <Field id="email" label="Official email" type="email" value={email} onChange={setEmail} />
+                <Field
+                  id="email"
+                  label={isGov ? "Registered Government Email address" : "Official email"}
+                  type="email"
+                  value={email}
+                  onChange={setEmail}
+                />
                 <Field id="password" label="Password" type="password" value={password} onChange={setPassword} />
                 <Button type="submit" className="h-11 w-full" disabled={busy}>
                   {busy ? "Verifying…" : "Sign in"}
