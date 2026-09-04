@@ -92,8 +92,8 @@ function Scan() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
-      toast.error("Add a photo of the package label first.");
+    if (!files.length) {
+      toast.error("Add at least one photo of the package label first.");
       return;
     }
     setBusy(true);
@@ -102,16 +102,20 @@ function Scan() {
       const uid = userData.user?.id;
       if (!uid) throw new Error("Session expired. Please sign in again.");
 
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${uid}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("label-images").upload(path, file, {
-        contentType: file.type || "image/jpeg",
-      });
-      if (upErr) throw new Error(upErr.message);
+      const paths: string[] = [];
+      for (const { file } of files) {
+        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const path = `${uid}/${crypto.randomUUID()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from("label-images").upload(path, file, {
+          contentType: file.type || "image/jpeg",
+        });
+        if (upErr) throw new Error(upErr.message);
+        paths.push(path);
+      }
 
       const result = await analyze({
         data: {
-          imagePath: path,
+          imagePaths: paths,
           productName: productName || undefined,
           brand: brand || undefined,
           packageType,
