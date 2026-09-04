@@ -58,14 +58,26 @@ function InspectionDetail() {
   });
 
 
-  const { data: imageUrl } = useQuery({
-    queryKey: ["inspection-image", data?.image_path],
-    enabled: !!data?.image_path,
+  const imagePaths: string[] = (() => {
+    const raw = data?.ai_raw as { image_paths?: unknown } | null | undefined;
+    const paths = Array.isArray(raw?.image_paths) ? (raw!.image_paths as string[]) : [];
+    if (paths.length) return paths;
+    return data?.image_path ? [data.image_path as string] : [];
+  })();
+
+  const { data: imageUrls } = useQuery({
+    queryKey: ["inspection-images", imagePaths],
+    enabled: imagePaths.length > 0,
     queryFn: async () => {
-      const { data: signed } = await supabase.storage
-        .from("label-images")
-        .createSignedUrl(data!.image_path as string, 3600);
-      return signed?.signedUrl ?? null;
+      const urls = await Promise.all(
+        imagePaths.map(async (path) => {
+          const { data: signed } = await supabase.storage
+            .from("label-images")
+            .createSignedUrl(path, 3600);
+          return signed?.signedUrl ?? null;
+        }),
+      );
+      return urls.filter((u): u is string => !!u);
     },
   });
 
