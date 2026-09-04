@@ -48,7 +48,7 @@ function InspectionDetail() {
       const { data, error } = await supabase
         .from("inspections")
         .select(
-          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
+          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, ai_raw, products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
         )
         .eq("id", inspectionId)
         .maybeSingle();
