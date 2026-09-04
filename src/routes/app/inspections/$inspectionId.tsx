@@ -21,18 +21,20 @@ export const Route = createFileRoute("/app/inspections/$inspectionId")({
 
 type Declaration = {
   id: string;
-  declaration_key: string;
-  extracted_value: string | null;
-  presence: string;
-  confidence: number | null;
+  declaration_type: string;
+  raw_text: string | null;
+  normalized_value: string | null;
+  validation_status: string;
+  confidence_score: number | null;
   notes: string | null;
 };
 
 type Violation = {
   id: string;
   rule_code: string | null;
-  title: string;
+  violation_type: string;
   description: string | null;
+  evidence: string | null;
   severity: "low" | "medium" | "high" | "critical";
   recommendation: string | null;
 };
@@ -46,7 +48,7 @@ function InspectionDetail() {
       const { data, error } = await supabase
         .from("inspections")
         .select(
-          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, products(product_name, brand, product_category, package_type, is_imported), extracted_declarations(id, declaration_key, extracted_value, presence, confidence, notes), violations(id, rule_code, title, description, severity, recommendation)",
+          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
         )
         .eq("id", inspectionId)
         .maybeSingle();
@@ -54,6 +56,7 @@ function InspectionDetail() {
       return data;
     },
   });
+
 
   const { data: imageUrl } = useQuery({
     queryKey: ["inspection-image", data?.image_path],
@@ -80,8 +83,9 @@ function InspectionDetail() {
   const declarations = (data.extracted_declarations ?? []) as unknown as Declaration[];
   const violations = (data.violations ?? []) as unknown as Violation[];
   const product = data.products as unknown as
-    | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null; is_imported: boolean | null }
+    | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null }
     | null;
+
 
   return (
     <div className="space-y-6">
@@ -112,8 +116,9 @@ function InspectionDetail() {
             <div className="flex items-center gap-2">
               <Package className="size-4" aria-hidden="true" />
               {product?.package_type ?? "Package type not set"}
-              {product?.is_imported ? " · Imported" : ""}
+              {product?.product_category ? ` · ${product.product_category}` : ""}
             </div>
+
           </dl>
         </div>
       </header>
@@ -135,20 +140,27 @@ function InspectionDetail() {
               {declarations.map((d) => (
                 <li key={d.id} className="px-5 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-medium">{DECLARATION_LABELS[d.declaration_key] ?? d.declaration_key}</p>
-                    <PresenceChip presence={d.presence} />
+                    <p className="font-medium">{DECLARATION_LABELS[d.declaration_type] ?? d.declaration_type}</p>
+                    <PresenceChip presence={d.validation_status} />
                   </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {d.extracted_value ? d.extracted_value : "Not detected on the label"}
-                  </p>
+                  {d.normalized_value || d.raw_text ? (
+                    <p className="mt-1 text-sm text-muted-foreground">{d.normalized_value || d.raw_text}</p>
+                  ) : d.validation_status === "missing" ? (
+                    <p className="mt-1 text-sm text-muted-foreground">Not detected on the label</p>
+                  ) : null}
+
+                  {d.normalized_value && d.raw_text && d.normalized_value !== d.raw_text ? (
+                    <p className="mt-1 text-xs text-muted-foreground">On label: “{d.raw_text}”</p>
+                  ) : null}
                   {d.notes ? <p className="mt-1 text-xs text-muted-foreground">{d.notes}</p> : null}
-                  {d.confidence != null ? (
+                  {d.confidence_score != null ? (
                     <p className="mt-1 text-xs text-muted-foreground">
-                      Confidence {Math.round(Number(d.confidence) * 100)}%
+                      Confidence {Math.round(Number(d.confidence_score) * 100)}%
                     </p>
                   ) : null}
                 </li>
               ))}
+
               {declarations.length === 0 ? (
                 <li className="px-5 py-8 text-sm text-muted-foreground">No declarations were extracted.</li>
               ) : null}
@@ -170,8 +182,12 @@ function InspectionDetail() {
                       </span>
                     ) : null}
                   </div>
-                  <p className="mt-2 font-medium">{v.title}</p>
+                  <p className="mt-2 font-medium">{v.violation_type}</p>
                   {v.description ? <p className="mt-1 text-sm text-muted-foreground">{v.description}</p> : null}
+                  {v.evidence ? (
+                    <p className="mt-1 text-xs text-muted-foreground">Evidence: {v.evidence}</p>
+                  ) : null}
+
                   {v.recommendation ? (
                     <p className="mt-2 rounded-lg bg-accent px-3 py-2 text-sm text-accent-foreground">
                       Corrective action: {v.recommendation}
