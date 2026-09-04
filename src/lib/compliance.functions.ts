@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 const AnalyzeInput = z.object({
-  imagePath: z.string().min(1),
+  imagePaths: z.array(z.string().min(1)).min(1).max(6),
   productName: z.string().optional(),
   brand: z.string().optional(),
   packageType: z.string().optional(),
@@ -77,18 +77,20 @@ export const analyzeLabel = createServerFn({ method: "POST" })
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured for this project.");
 
-    const { data: signed, error: signError } = await supabase.storage
-      .from("label-images")
-      .createSignedUrl(data.imagePath, 600);
-    if (signError || !signed?.signedUrl) {
-      throw new Error("Could not read the uploaded label image.");
+    const dataUrls: string[] = [];
+    for (const path of data.imagePaths) {
+      const { data: signed, error: signError } = await supabase.storage
+        .from("label-images")
+        .createSignedUrl(path, 600);
+      if (signError || !signed?.signedUrl) {
+        throw new Error("Could not read one of the uploaded label images.");
+      }
+      const imageResponse = await fetch(signed.signedUrl);
+      if (!imageResponse.ok) throw new Error("Could not download one of the uploaded label images.");
+      const contentType = imageResponse.headers.get("content-type") ?? "image/jpeg";
+      const bytes = Buffer.from(await imageResponse.arrayBuffer()).toString("base64");
+      dataUrls.push(`data:${contentType};base64,${bytes}`);
     }
-
-    const imageResponse = await fetch(signed.signedUrl);
-    if (!imageResponse.ok) throw new Error("Could not download the uploaded label image.");
-    const contentType = imageResponse.headers.get("content-type") ?? "image/jpeg";
-    const bytes = Buffer.from(await imageResponse.arrayBuffer()).toString("base64");
-    const dataUrl = `data:${contentType};base64,${bytes}`;
 
     const { data: rules } = await supabase
       .from("compliance_rules")
@@ -100,7 +102,7 @@ export const analyzeLabel = createServerFn({ method: "POST" })
       .join("\n");
 
     const systemPrompt = `You are Nirikshan AI, a Legal Metrology (Packaged Commodities) Rules, 2011 compliance analyst for India.
-Analyse the packaged commodity label image and report ONLY what is visually verifiable. Never invent text you cannot read.
+You may receive MULTIPLE photographs of the SAME package (front, back, side, close-ups). Treat them as one package: merge evidence across all images, and mark a declaration "present" if it is readable in ANY image. Report ONLY what is visually verifiable. Never invent text you cannot read. In evidence, mention which image (1-based index) the proof came from.
 Applicable rules:
 ${rulesText}
 
@@ -144,8 +146,8 @@ Return JSON with this exact shape:
           {
             role: "user",
             content: [
-              { type: "text", text: userPrompt },
-              { type: "image_url", image_url: { url: dataUrl } },
+              { type: "text", text: `${userPrompt}\n\nNumber of images of this package: ${dataUrls.length}.` },
+              ...dataUrls.map((url) => ({ type: "image_url" as const, image_url: { url } })),
             ],
           },
         ],
@@ -225,12 +227,12 @@ Return JSON with this exact shape:
         latitude: data.latitude ?? null,
         longitude: data.longitude ?? null,
         location_label: data.locationLabel ?? null,
-        image_path: data.imagePath,
+        image_path: data.imagePaths[0]!,
         image_quality_score: clamp(ai.image_quality_score ?? 0),
         compliance_score: score,
         status,
         summary: ai.summary ?? null,
-        ai_raw: JSON.parse(JSON.stringify(ai)),
+        ai_raw: JSON.parse(JSON.stringify({ ...ai, image_paths: data.imagePaths })),
       })
       .select("id")
       .single();

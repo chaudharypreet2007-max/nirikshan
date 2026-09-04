@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { Camera, Upload, MapPin, Loader2 } from "lucide-react";
+import { Camera, Upload, MapPin, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { analyzeLabel } from "@/lib/compliance.functions";
 import { useAuth } from "@/lib/auth";
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/app/scan")({
 
 const CATEGORIES = ["Food & beverages", "Cosmetics", "Household", "Electronics", "Apparel", "Pharmaceutical", "Other"];
 const PACKAGE_TYPES = ["Retail pack", "Wholesale pack", "Multi-piece pack", "Combination pack", "E-commerce listing"];
+const MAX_IMAGES = 6;
 
 function Scan() {
   const navigate = useNavigate();
@@ -44,8 +45,7 @@ function Scan() {
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [files, setFiles] = useState<{ file: File; preview: string }[]>([]);
   const [productName, setProductName] = useState("");
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]!);
@@ -55,11 +55,27 @@ function Scan() {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const pick = (f: File | undefined) => {
-    if (!f) return;
-    setFile(f);
-    setPreview(URL.createObjectURL(f));
+  const pick = (list: FileList | null) => {
+    const picked = Array.from(list ?? []);
+    if (!picked.length) return;
+    setFiles((prev) => {
+      const room = MAX_IMAGES - prev.length;
+      if (room <= 0) {
+        toast.error(`You can attach up to ${MAX_IMAGES} images per package.`);
+        return prev;
+      }
+      if (picked.length > room) toast.info(`Only ${room} more image(s) added — limit is ${MAX_IMAGES}.`);
+      return [...prev, ...picked.slice(0, room).map((f) => ({ file: f, preview: URL.createObjectURL(f) }))];
+    });
   };
+
+  const removeAt = (i: number) =>
+    setFiles((prev) => {
+      const next = [...prev];
+      const [gone] = next.splice(i, 1);
+      if (gone) URL.revokeObjectURL(gone.preview);
+      return next;
+    });
 
   const captureLocation = () => {
     if (!navigator.geolocation) {
@@ -77,8 +93,8 @@ function Scan() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) {
-      toast.error("Add a photo of the package label first.");
+    if (!files.length) {
+      toast.error("Add at least one photo of the package label first.");
       return;
     }
     setBusy(true);
@@ -87,16 +103,20 @@ function Scan() {
       const uid = userData.user?.id;
       if (!uid) throw new Error("Session expired. Please sign in again.");
 
-      const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const path = `${uid}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("label-images").upload(path, file, {
-        contentType: file.type || "image/jpeg",
-      });
-      if (upErr) throw new Error(upErr.message);
+      const paths: string[] = [];
+      for (const { file } of files) {
+        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const path = `${uid}/${crypto.randomUUID()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from("label-images").upload(path, file, {
+          contentType: file.type || "image/jpeg",
+        });
+        if (upErr) throw new Error(upErr.message);
+        paths.push(path);
+      }
 
       const result = await analyze({
         data: {
-          imagePath: path,
+          imagePaths: paths,
           productName: productName || undefined,
           brand: brand || undefined,
           packageType,
@@ -129,24 +149,62 @@ function Scan() {
 
       <form className="grid gap-6 lg:grid-cols-2" onSubmit={submit}>
         <section className="surface-panel p-5">
-          <h2 className="font-display text-base font-semibold">Label image</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-base font-semibold">Label images</h2>
+            <span className="text-xs text-muted-foreground">
+              {files.length}/{MAX_IMAGES} attached
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Add front, back, side and close-up shots of the same package — more angles give a more accurate check.
+          </p>
+
           <div className="mt-4 overflow-hidden rounded-xl border border-dashed border-border bg-muted">
-            {preview ? (
-              <img src={preview} alt="Selected package label" className="max-h-80 w-full object-contain" />
+            {files.length ? (
+              <div className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3">
+                {files.map((f, i) => (
+                  <div key={f.preview} className="relative overflow-hidden rounded-lg border border-border bg-background">
+                    <img src={f.preview} alt={`Package label view ${i + 1}`} className="h-28 w-full object-cover" />
+                    <span className="absolute left-1 top-1 rounded bg-background/85 px-1.5 py-0.5 text-[10px] font-medium">
+                      {i + 1}
+                    </span>
+                    <button
+                      type="button"
+                      aria-label={`Remove image ${i + 1}`}
+                      onClick={() => removeAt(i)}
+                      className="absolute right-1 top-1 rounded-full bg-background/85 p-1 text-foreground hover:bg-background"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             ) : (
               <div className="flex h-56 flex-col items-center justify-center gap-2 text-muted-foreground">
                 <Camera className="size-8" aria-hidden="true" />
-                <p className="text-sm">No image selected</p>
+                <p className="text-sm">No images selected</p>
               </div>
             )}
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Button type="button" variant="secondary" className="h-11" onClick={() => cameraRef.current?.click()}>
+            <Button
+              type="button"
+              variant="secondary"
+              className="h-11"
+              disabled={files.length >= MAX_IMAGES}
+              onClick={() => cameraRef.current?.click()}
+            >
               <Camera className="size-4" /> Take photo
             </Button>
-            <Button type="button" variant="outline" className="h-11" onClick={() => fileRef.current?.click()}>
-              <Upload className="size-4" /> Upload image
+            <Button
+              type="button"
+              variant="outline"
+              className="h-11"
+              disabled={files.length >= MAX_IMAGES}
+              onClick={() => fileRef.current?.click()}
+            >
+              <Upload className="size-4" /> Upload images
             </Button>
           </div>
           <input
@@ -155,14 +213,21 @@ function Scan() {
             accept="image/*"
             capture="environment"
             className="hidden"
-            onChange={(e) => pick(e.target.files?.[0])}
+            onChange={(e) => {
+              pick(e.target.files);
+              e.target.value = "";
+            }}
           />
           <input
             ref={fileRef}
             type="file"
             accept="image/*"
+            multiple
             className="hidden"
-            onChange={(e) => pick(e.target.files?.[0])}
+            onChange={(e) => {
+              pick(e.target.files);
+              e.target.value = "";
+            }}
           />
         </section>
 
@@ -215,7 +280,7 @@ function Scan() {
           <Button type="submit" className="h-12 w-full" disabled={busy}>
             {busy ? (
               <>
-                <Loader2 className="size-4 animate-spin" /> Analysing label…
+                <Loader2 className="size-4 animate-spin" /> Analysing {files.length} image{files.length > 1 ? "s" : ""}…
               </>
             ) : (
               "Run compliance check"
