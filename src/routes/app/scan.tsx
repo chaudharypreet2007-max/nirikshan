@@ -77,17 +77,48 @@ function Scan() {
       return next;
     });
 
+  const [locating, setLocating] = useState(false);
+
   const captureLocation = () => {
     if (!navigator.geolocation) {
       toast.error("Location is not available on this device.");
       return;
     }
+    setLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        toast.success("Location captured");
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setCoords({ lat, lng });
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
+          );
+          if (res.ok) {
+            const geo = (await res.json()) as {
+              display_name?: string;
+              address?: Record<string, string | undefined>;
+            };
+            const a = geo.address ?? {};
+            const parts = [
+              a["amenity"] ?? a["building"] ?? a["road"] ?? a["neighbourhood"] ?? a["suburb"],
+              a["city"] ?? a["town"] ?? a["village"] ?? a["county"],
+              a["state"],
+            ].filter(Boolean);
+            const name = parts.length ? parts.join(", ") : geo.display_name;
+            if (name) setLocationLabel(name);
+          }
+          toast.success("Location captured");
+        } catch {
+          toast.success("Location captured (coordinates only)");
+        } finally {
+          setLocating(false);
+        }
       },
-      () => toast.error("Could not read location. You can type it instead."),
+      () => {
+        setLocating(false);
+        toast.error("Could not read location. You can type it instead.");
+      },
     );
   };
 
@@ -266,12 +297,13 @@ function Scan() {
                 value={locationLabel}
                 onChange={(e) => setLocationLabel(e.target.value)}
               />
-              <Button type="button" variant="outline" className="h-11 shrink-0" onClick={captureLocation}>
-                <MapPin className="size-4" /> GPS
+              <Button type="button" variant="outline" className="h-11 shrink-0" disabled={locating} onClick={captureLocation}>
+                {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />} GPS
               </Button>
             </div>
             {coords ? (
               <p className="text-xs text-muted-foreground">
+                {locationLabel ? <span className="font-medium text-foreground">{locationLabel} · </span> : null}
                 {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
               </p>
             ) : null}
