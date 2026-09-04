@@ -101,9 +101,9 @@ function Scan() {
             };
             const a = geo.address ?? {};
             const parts = [
-              a.amenity ?? a.building ?? a.road ?? a.neighbourhood ?? a.suburb,
-              a.city ?? a.town ?? a.village ?? a.county,
-              a.state,
+              a["amenity"] ?? a["building"] ?? a["road"] ?? a["neighbourhood"] ?? a["suburb"],
+              a["city"] ?? a["town"] ?? a["village"] ?? a["county"],
+              a["state"],
             ].filter(Boolean);
             const name = parts.length ? parts.join(", ") : geo.display_name;
             if (name) setLocationLabel(name);
