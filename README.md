@@ -2,13 +2,11 @@
 
 Implement exactly the screenshot and nothing else
 
-This project was built with [Lovable](https://lovable.dev).
+
 
 **Live app**: https://nirikshan.lovable.app
 
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/abda3d8e-2158-4536-8385-5755f5fd7ff2).
+Continue developing this project in the (https://lovable.dev/projects/abda3d8e-2158-4536-8385-5755f5fd7ff2).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
 - **Stay in sync**: every change made in Lovable is committed straight to this repository.
