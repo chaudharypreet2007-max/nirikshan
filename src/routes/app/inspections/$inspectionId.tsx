@@ -88,7 +88,9 @@ function InspectionDetail() {
   if (error || !data)
     return (
       <div className="surface-panel p-8 text-center">
-        <p className="text-sm text-muted-foreground">This inspection could not be found or you do not have access.</p>
+        <p className="text-sm text-muted-foreground">
+          Access denied. This record either does not exist or belongs to another officer or organisation.
+        </p>
         <Button asChild className="mt-4">
           <Link to="/app/inspections">Back to inspections</Link>
         </Button>
