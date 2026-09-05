@@ -50,6 +50,13 @@
       "when": 1788590633266,
       "tag": "0006_revoke_anon_execute_security_definer",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1788590708875,
+      "tag": "0007_fix_jurisdiction_null_bypass",
+      "breakpoints": true
     }
   ]
 }
