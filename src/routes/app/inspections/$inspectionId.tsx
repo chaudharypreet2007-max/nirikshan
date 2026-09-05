@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, CalendarClock, Package } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScoreDial, StatusChip, SeverityChip, DECLARATION_LABELS, type ComplianceStatus } from "@/components/compliance";
 import { Button } from "@/components/ui/button";
