@@ -105,6 +105,23 @@ function InspectionDetail() {
     setDownloading(true);
     try {
       const { buildInspectionPdf } = await import("@/lib/inspection-pdf");
+      const evidenceImages = await Promise.all(
+        (imageUrls ?? []).map(async (url, i) => {
+          try {
+            const res = await fetch(url);
+            const blob = await res.blob();
+            const dataUrl = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.onerror = () => reject(new Error("read failed"));
+              reader.readAsDataURL(blob);
+            });
+            return { dataUrl, label: `Image ${i + 1}` };
+          } catch {
+            return null;
+          }
+        }),
+      );
       const location =
         data.location_label ??
         (data.latitude && data.longitude
@@ -123,6 +140,7 @@ function InspectionDetail() {
         summary: data.summary,
         declarations,
         violations,
+        evidenceImages: evidenceImages.filter((e): e is { dataUrl: string; label: string } => !!e),
       });
       const slug = (product?.product_name ?? "inspection").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
       doc.save(`nirikshan-report-${slug || inspectionId}.pdf`);
