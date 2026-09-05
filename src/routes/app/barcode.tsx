@@ -265,7 +265,7 @@ function BarcodePage() {
   );
 }
 
-function Field({ label, value, mono }: { label: string; value?: string | null; mono?: boolean }) {
+function Field({ label, value, mono }: { label: string; value?: string | null | undefined; mono?: boolean | undefined }) {
   return (
     <div>
       <dt className="text-xs text-muted-foreground">{label}</dt>

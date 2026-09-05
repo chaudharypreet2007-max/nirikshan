@@ -18,9 +18,9 @@ import {
 } from "@/components/ui/select";
 
 type ScanSearch = {
-  barcode?: string;
-  productName?: string;
-  brand?: string;
+  barcode?: string | undefined;
+  productName?: string | undefined;
+  brand?: string | undefined;
 };
 
 export const Route = createFileRoute("/app/scan")({
