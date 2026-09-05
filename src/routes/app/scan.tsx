@@ -52,20 +52,23 @@ const MAX_IMAGES = 6;
 
 function Scan() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const { isGovernment } = useAuth();
   const analyze = useServerFn(analyzeLabel);
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
   const [files, setFiles] = useState<{ file: File; preview: string }[]>([]);
-  const [productName, setProductName] = useState("");
-  const [brand, setBrand] = useState("");
+  const [productName, setProductName] = useState(search.productName ?? "");
+  const [brand, setBrand] = useState(search.brand ?? "");
+  const [barcode, setBarcode] = useState(search.barcode ?? "");
   const [category, setCategory] = useState(CATEGORIES[0]!);
   const [packageType, setPackageType] = useState(PACKAGE_TYPES[0]!);
   const [imported, setImported] = useState("false");
   const [locationLabel, setLocationLabel] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
+
 
   const pick = (list: FileList | null) => {
     const picked = Array.from(list ?? []);
