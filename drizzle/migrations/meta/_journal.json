@@ -29,6 +29,13 @@
       "when": 1788514556855,
       "tag": "0003_user_roles_admin_write_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788589802404,
+      "tag": "0004_officer_data_isolation_rls",
+      "breakpoints": true
     }
   ]
 }
