@@ -294,6 +294,26 @@ function Scan() {
             <Label htmlFor="brand">Brand (optional)</Label>
             <Input id="brand" className="h-11" value={brand} onChange={(e) => setBrand(e.target.value)} />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="barcode">Barcode (optional)</Label>
+            <div className="flex gap-2">
+              <Input
+                id="barcode"
+                className="h-11 font-mono"
+                inputMode="numeric"
+                placeholder="Scan or type the product barcode"
+                value={barcode}
+                onChange={(e) => setBarcode(e.target.value)}
+              />
+              <Button type="button" variant="outline" className="h-11 shrink-0" onClick={() => navigate({ to: "/app/barcode" })}>
+                Scan
+              </Button>
+            </div>
+            {search.barcode ? (
+              <p className="text-xs text-muted-foreground">Product identified from a scanned barcode.</p>
+            ) : null}
+          </div>
+
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Picker label="Category" value={category} onChange={setCategory} options={CATEGORIES} />
