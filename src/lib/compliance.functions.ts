@@ -13,7 +13,25 @@ const AnalyzeInput = z.object({
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
   locationLabel: z.string().nullable().optional(),
+  barcode: z.string().trim().min(4).max(64).nullable().optional(),
+  barcodeSource: z.string().max(64).nullable().optional(),
+  barcodeProductName: z.string().nullable().optional(),
+  barcodeManufacturer: z.string().nullable().optional(),
+  packageContext: z.string().max(64).nullable().optional(),
 });
+
+/** Token-overlap similarity, 0-1. */
+function similarity(a?: string | null, b?: string | null) {
+  if (!a || !b) return null;
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
+  const x = norm(a);
+  const y = norm(b);
+  if (!x.length || !y.length) return null;
+  const setY = new Set(y);
+  const hits = x.filter((t) => setY.has(t)).length;
+  return (2 * hits) / (x.length + y.length);
+}
+
 
 type Declaration = {
   declaration_type: string;
