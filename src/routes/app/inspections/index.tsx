@@ -66,8 +66,10 @@ function Inspections() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold sm:text-3xl">Inspections</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Every scan with its verdict, score and audit metadata.</p>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">My inspections</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Only records you own are shown — access is enforced by the database, not the screen.
+          </p>
         </div>
         <Button asChild className="h-11">
           <Link to="/app/scan">
