@@ -62,8 +62,8 @@ function Dashboard() {
           <p className="mt-1 text-sm text-muted-foreground">
             {profile?.full_name ? `Welcome back, ${profile.full_name}. ` : ""}
             {isGovernment
-              ? "Field inspections and violations across your jurisdiction."
-              : "Pre-dispatch verification status for your organisation's packaging."}
+              ? "Your own field inspections and violations. Other officers' records are not visible to you."
+              : "Pre-dispatch verification status for the packaging you are responsible for."}
           </p>
         </div>
         <Button asChild className="h-11">
