@@ -140,6 +140,7 @@ function InspectionDetail() {
         summary: data.summary,
         declarations,
         violations,
+        evidenceImages: evidenceImages.filter((e): e is { dataUrl: string; label: string } => !!e),
       });
       const slug = (product?.product_name ?? "inspection").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
       doc.save(`nirikshan-report-${slug || inspectionId}.pdf`);
