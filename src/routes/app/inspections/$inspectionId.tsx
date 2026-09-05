@@ -191,7 +191,10 @@ function InspectionDetail() {
               {product?.package_type ?? "Package type not set"}
               {product?.product_category ? ` · ${product.product_category}` : ""}
             </div>
-
+            <div className="flex items-center gap-2">
+              <User className="size-4" aria-hidden="true" />
+              {inspectorName}
+            </div>
           </dl>
         </div>
       </header>
