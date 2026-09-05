@@ -36,6 +36,13 @@
       "when": 1788589802404,
       "tag": "0004_officer_data_isolation_rls",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788590553676,
+      "tag": "0005_inspections_inspector_profile_fk",
+      "breakpoints": true
     }
   ]
 }

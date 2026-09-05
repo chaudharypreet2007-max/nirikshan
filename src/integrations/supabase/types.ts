@@ -199,6 +199,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "inspections_inspector_id_fkey"
+            columns: ["inspector_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "inspections_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
