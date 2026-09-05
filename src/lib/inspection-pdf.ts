@@ -29,6 +29,7 @@ export type ReportData = {
     severity: string;
     recommendation: string | null;
   }[];
+  evidenceImages?: { dataUrl: string; label: string }[];
 };
 
 const MARGIN = 16;
@@ -160,6 +161,37 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
     y += 3;
   });
   if (data.violations.length === 0) para("No violations were detected against the active rule set.");
+
+  if (data.evidenceImages && data.evidenceImages.length > 0) {
+    heading(`Evidence images (${data.evidenceImages.length})`);
+    for (let i = 0; i < data.evidenceImages.length; i++) {
+      const img = data.evidenceImages[i]!;
+      const maxW = CONTENT_W;
+      const maxH = 110;
+      let w = maxW;
+      let h = maxH;
+      try {
+        const props = doc.getImageProperties(img.dataUrl);
+        const scale = Math.min(maxW / props.width, maxH / props.height);
+        w = props.width * scale;
+        h = props.height * scale;
+      } catch {
+        // fall back to full-width box
+      }
+      ensureSpace(h + 8);
+      try {
+        doc.addImage(img.dataUrl, MARGIN, y, w, h);
+      } catch {
+        para(`Image ${i + 1} could not be embedded.`, { size: 8, color: [150, 150, 150] });
+        continue;
+      }
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(140, 140, 140);
+      doc.text(img.label, MARGIN, y + h + 4);
+      y += h + 8;
+    }
+  }
 
   // Footer on every page
   const pages = doc.getNumberOfPages();
