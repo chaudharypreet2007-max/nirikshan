@@ -27,6 +27,7 @@ type Row = {
   status: ComplianceStatus;
   inspection_date: string;
   location_label: string | null;
+  barcode: string | null;
   products: { product_name: string; brand: string | null; product_category: string | null } | null;
 };
 
@@ -47,7 +48,7 @@ function Inspections() {
       const { data, error } = await supabase
         .from("inspections")
         .select(
-          "id, compliance_score, status, inspection_date, location_label, products(product_name, brand, product_category)",
+          "id, compliance_score, status, inspection_date, location_label, barcode, products(product_name, brand, product_category)",
         )
         .order("inspection_date", { ascending: false });
       if (error) throw error;
@@ -58,7 +59,7 @@ function Inspections() {
   const rows = (data ?? []).filter((r) => {
     if (filter !== "all" && r.status !== filter) return false;
     if (!q.trim()) return true;
-    const hay = `${r.products?.product_name ?? ""} ${r.products?.brand ?? ""} ${r.location_label ?? ""}`.toLowerCase();
+    const hay = `${r.products?.product_name ?? ""} ${r.products?.brand ?? ""} ${r.location_label ?? ""} ${r.barcode ?? ""} ${r.id}`.toLowerCase();
     return hay.includes(q.trim().toLowerCase());
   });
 
@@ -83,7 +84,7 @@ function Inspections() {
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <Input
             className="h-11 pl-9"
-            placeholder="Search product, brand or location"
+            placeholder="Search product, brand, barcode, location or inspection ID"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             aria-label="Search inspections"
