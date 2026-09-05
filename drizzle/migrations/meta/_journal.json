@@ -57,6 +57,13 @@
       "when": 1788590708875,
       "tag": "0007_fix_jurisdiction_null_bypass",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788596074848,
+      "tag": "0008_barcode_intelligence_and_supervisor_review",
+      "breakpoints": true
     }
   ]
 }
