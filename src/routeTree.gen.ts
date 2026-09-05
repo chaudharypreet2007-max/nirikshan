@@ -19,6 +19,7 @@ import { Route as AuthCompanyRouteImport } from './routes/auth.company'
 import { Route as AuthGovernmentRouteImport } from './routes/auth.government'
 import { Route as AppInspectionsIndexRouteImport } from './routes/app/inspections/index'
 import { Route as AppInspectionsInspectionIdRouteImport } from './routes/app/inspections/$inspectionId'
+import { Route as AppReviewsIndexRouteImport } from './routes/app/reviews/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -71,6 +72,11 @@ const AppInspectionsInspectionIdRoute =
     path: '/inspections/$inspectionId',
     getParentRoute: () => AppRoute,
   } as any)
+const AppReviewsIndexRoute = AppReviewsIndexRouteImport.update({
+  id: '/reviews/',
+  path: '/reviews/',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/auth/government': typeof AuthGovernmentRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
+  '/app/reviews/': typeof AppReviewsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -95,6 +102,7 @@ export interface FileRoutesByTo {
   '/auth/government': typeof AuthGovernmentRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/inspections': typeof AppInspectionsIndexRoute
+  '/app/reviews': typeof AppReviewsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/auth/government': typeof AuthGovernmentRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
+  '/app/reviews/': typeof AppReviewsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/auth/government'
     | '/app/inspections/$inspectionId'
     | '/app/inspections/'
+    | '/app/reviews/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/auth/government'
     | '/app/inspections/$inspectionId'
     | '/app/inspections'
+    | '/app/reviews'
   id:
     | '__root__'
     | '/'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/auth/government'
     | '/app/inspections/$inspectionId'
     | '/app/inspections/'
+    | '/app/reviews/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -227,6 +239,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInspectionsInspectionIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/reviews/': {
+      id: '/app/reviews/'
+      path: '/reviews'
+      fullPath: '/app/reviews/'
+      preLoaderRoute: typeof AppReviewsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -237,6 +256,7 @@ interface AppRouteChildren {
   AppScanRoute: typeof AppScanRoute
   AppInspectionsInspectionIdRoute: typeof AppInspectionsInspectionIdRoute
   AppInspectionsIndexRoute: typeof AppInspectionsIndexRoute
+  AppReviewsIndexRoute: typeof AppReviewsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -246,6 +266,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppScanRoute: AppScanRoute,
   AppInspectionsInspectionIdRoute: AppInspectionsInspectionIdRoute,
   AppInspectionsIndexRoute: AppInspectionsIndexRoute,
+  AppReviewsIndexRoute: AppReviewsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
