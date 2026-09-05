@@ -43,6 +43,13 @@
       "when": 1788590553676,
       "tag": "0005_inspections_inspector_profile_fk",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788590633266,
+      "tag": "0006_revoke_anon_execute_security_definer",
+      "breakpoints": true
     }
   ]
 }
