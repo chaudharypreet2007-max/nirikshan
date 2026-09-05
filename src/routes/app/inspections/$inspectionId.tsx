@@ -100,6 +100,8 @@ function InspectionDetail() {
   const product = data.products as unknown as
     | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null }
     | null;
+  const inspector = data.profiles as unknown as { full_name: string | null } | null;
+  const inspectorName = inspector?.full_name ?? "Inspector";
 
   const exportPdf = async () => {
     setDownloading(true);
