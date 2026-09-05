@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, MapPin, CalendarClock, Package } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScoreDial, StatusChip, SeverityChip, DECLARATION_LABELS, type ComplianceStatus } from "@/components/compliance";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,8 @@ type Violation = {
 
 function InspectionDetail() {
   const { inspectionId } = Route.useParams();
+  const [downloading, setDownloading] = useState(false);
+
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["inspection", inspectionId],
@@ -98,14 +101,51 @@ function InspectionDetail() {
     | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null }
     | null;
 
+  const exportPdf = async () => {
+    setDownloading(true);
+    try {
+      const { buildInspectionPdf } = await import("@/lib/inspection-pdf");
+      const location =
+        data.location_label ??
+        (data.latitude && data.longitude
+          ? `${Number(data.latitude).toFixed(4)}, ${Number(data.longitude).toFixed(4)}`
+          : "Location not recorded");
+      const doc = buildInspectionPdf({
+        productName: product?.product_name ?? "Unidentified product",
+        brand: product?.brand ?? null,
+        packageType: product?.package_type ?? null,
+        category: product?.product_category ?? null,
+        score: data.compliance_score ?? 0,
+        status: data.status,
+        inspectionDate: new Date(data.inspection_date).toLocaleString(),
+        location,
+        inspectionType: data.inspection_type,
+        summary: data.summary,
+        declarations,
+        violations,
+      });
+      const slug = (product?.product_name ?? "inspection").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      doc.save(`nirikshan-report-${slug || inspectionId}.pdf`);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+
 
   return (
     <div className="space-y-6">
-      <Button asChild variant="ghost" size="sm" className="-ml-2">
-        <Link to="/app/inspections">
-          <ArrowLeft className="size-4" /> Inspections
-        </Link>
-      </Button>
+      <div className="flex items-center justify-between gap-2">
+        <Button asChild variant="ghost" size="sm" className="-ml-2">
+          <Link to="/app/inspections">
+            <ArrowLeft className="size-4" /> Inspections
+          </Link>
+        </Button>
+        <Button onClick={exportPdf} disabled={downloading} size="sm" className="gap-2">
+          {downloading ? <Loader2 className="size-4 animate-spin" /> : <FileDown className="size-4" />}
+          Export PDF report
+        </Button>
+      </div>
 
       <header className="surface-panel flex flex-wrap items-center gap-6 p-6">
         <ScoreDial score={data.compliance_score ?? 0} status={data.status as ComplianceStatus} />
