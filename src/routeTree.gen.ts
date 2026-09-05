@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AppBarcodeRouteImport } from './routes/app/barcode'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppRulesRouteImport } from './routes/app/rules'
 import { Route as AppScanRouteImport } from './routes/app/scan'
@@ -28,6 +29,11 @@ const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppBarcodeRoute = AppBarcodeRouteImport.update({
+  id: '/barcode',
+  path: '/barcode',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
@@ -69,6 +75,7 @@ const AppInspectionsInspectionIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/barcode': typeof AppBarcodeRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/barcode': typeof AppBarcodeRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/barcode': typeof AppBarcodeRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/app/barcode'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/app/barcode'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/app/barcode'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
@@ -158,6 +170,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/barcode': {
+      id: '/app/barcode'
+      path: '/barcode'
+      fullPath: '/app/barcode'
+      preLoaderRoute: typeof AppBarcodeRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/dashboard': {
       id: '/app/dashboard'
@@ -212,6 +231,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppBarcodeRoute: typeof AppBarcodeRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppRulesRoute: typeof AppRulesRoute
   AppScanRoute: typeof AppScanRoute
@@ -220,6 +240,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppBarcodeRoute: AppBarcodeRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppRulesRoute: AppRulesRoute,
   AppScanRoute: AppScanRoute,
