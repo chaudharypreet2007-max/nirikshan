@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          inspection_id: string | null
+          metadata: Json
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          inspection_id?: string | null
+          metadata?: Json
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          inspection_id?: string | null
+          metadata?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       compliance_rules: {
         Row: {
           applicable_package_type: string
@@ -108,6 +135,10 @@ export type Database = {
           ai_raw: Json | null
           compliance_score: number | null
           created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deletion_reason: string | null
+          finalized_at: string | null
           id: string
           image_path: string | null
           image_quality_score: number | null
@@ -126,6 +157,10 @@ export type Database = {
           ai_raw?: Json | null
           compliance_score?: number | null
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
+          finalized_at?: string | null
           id?: string
           image_path?: string | null
           image_quality_score?: number | null
@@ -144,6 +179,10 @@ export type Database = {
           ai_raw?: Json | null
           compliance_score?: number | null
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
+          finalized_at?: string | null
           id?: string
           image_path?: string | null
           image_quality_score?: number | null
@@ -373,6 +412,10 @@ export type Database = {
         Args: { _inspection_id: string; _user_id: string }
         Returns: boolean
       }
+      can_oversee_inspector: {
+        Args: { _admin_id: string; _inspector_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -381,6 +424,11 @@ export type Database = {
         Returns: boolean
       }
       is_gov: { Args: { _user_id: string }; Returns: boolean }
+      is_org_admin_of: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
       my_org: { Args: { _user_id: string }; Returns: string }
     }
     Enums: {

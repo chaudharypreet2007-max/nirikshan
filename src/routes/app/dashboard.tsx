@@ -62,8 +62,8 @@ function Dashboard() {
           <p className="mt-1 text-sm text-muted-foreground">
             {profile?.full_name ? `Welcome back, ${profile.full_name}. ` : ""}
             {isGovernment
-              ? "Field inspections and violations across your jurisdiction."
-              : "Pre-dispatch verification status for your organisation's packaging."}
+              ? "Your own field inspections and violations. Other officers' records are not visible to you."
+              : "Pre-dispatch verification status for the packaging you are responsible for."}
           </p>
         </div>
         <Button asChild className="h-11">
@@ -74,7 +74,7 @@ function Dashboard() {
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat label="Total scans" value={total} icon={ClipboardList} />
+        <Stat label="My total scans" value={total} icon={ClipboardList} />
         <Stat label="Compliance rate" value={`${rate}%`} icon={Activity} />
         <Stat label={isGovernment ? "Non-compliant" : "Blocking issues"} value={nonCompliant} icon={ShieldAlert} tone="violation" />
         <Stat label="Pending review" value={review} icon={ShieldAlert} tone="review" />
