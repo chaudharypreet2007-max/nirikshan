@@ -172,6 +172,12 @@ function Scan() {
           latitude: coords?.lat,
           longitude: coords?.lng,
           locationLabel: locationLabel || undefined,
+          barcode: barcode.trim() ? barcode.trim() : null,
+          barcodeSource: barcode.trim() ? (search.barcode ? "scanned" : "manual") : null,
+          barcodeProductName: search.productName ?? null,
+          barcodeManufacturer: null,
+          packageContext: packageType,
+
         },
       });
 
