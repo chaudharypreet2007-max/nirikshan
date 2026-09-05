@@ -13,6 +13,7 @@ export type ReportData = {
   location: string;
   inspectionType: string;
   summary: string | null;
+  inspectorName: string;
   declarations: {
     declaration_type: string;
     raw_text: string | null;
