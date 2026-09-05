@@ -74,7 +74,7 @@ function Dashboard() {
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat label="Total scans" value={total} icon={ClipboardList} />
+        <Stat label="My total scans" value={total} icon={ClipboardList} />
         <Stat label="Compliance rate" value={`${rate}%`} icon={Activity} />
         <Stat label={isGovernment ? "Non-compliant" : "Blocking issues"} value={nonCompliant} icon={ShieldAlert} tone="violation" />
         <Stat label="Pending review" value={review} icon={ShieldAlert} tone="review" />
