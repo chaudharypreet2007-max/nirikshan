@@ -112,6 +112,7 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
   para(`Inspection date: ${data.inspectionDate}`);
   para(`Location: ${data.location}`);
   para(`Inspection type: ${data.inspectionType === "government_enforcement" ? "Government enforcement" : "Private pre-compliance"}`);
+  para(`Inspector: ${data.inspectorName}`);
   y += 3;
 
   if (data.summary) {
