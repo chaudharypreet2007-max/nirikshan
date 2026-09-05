@@ -99,6 +99,39 @@ function InspectionDetail() {
     | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null }
     | null;
 
+  const [downloading, setDownloading] = useState(false);
+
+  const exportPdf = async () => {
+    setDownloading(true);
+    try {
+      const { buildInspectionPdf } = await import("@/lib/inspection-pdf");
+      const location =
+        data.location_label ??
+        (data.latitude && data.longitude
+          ? `${Number(data.latitude).toFixed(4)}, ${Number(data.longitude).toFixed(4)}`
+          : "Location not recorded");
+      const doc = buildInspectionPdf({
+        productName: product?.product_name ?? "Unidentified product",
+        brand: product?.brand ?? null,
+        packageType: product?.package_type ?? null,
+        category: product?.product_category ?? null,
+        score: data.compliance_score ?? 0,
+        status: data.status,
+        inspectionDate: new Date(data.inspection_date).toLocaleString(),
+        location,
+        inspectionType: data.inspection_type,
+        summary: data.summary,
+        declarations,
+        violations,
+      });
+      const slug = (product?.product_name ?? "inspection").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      doc.save(`nirikshan-report-${slug || inspectionId}.pdf`);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+
 
   return (
     <div className="space-y-6">
