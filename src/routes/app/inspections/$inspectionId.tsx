@@ -42,6 +42,8 @@ type Violation = {
 
 function InspectionDetail() {
   const { inspectionId } = Route.useParams();
+  const [downloading, setDownloading] = useState(false);
+
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["inspection", inspectionId],
@@ -98,8 +100,6 @@ function InspectionDetail() {
   const product = data.products as unknown as
     | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null }
     | null;
-
-  const [downloading, setDownloading] = useState(false);
 
   const exportPdf = async () => {
     setDownloading(true);
