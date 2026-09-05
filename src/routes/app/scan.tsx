@@ -17,7 +17,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+type ScanSearch = {
+  barcode?: string;
+  productName?: string;
+  brand?: string;
+};
+
 export const Route = createFileRoute("/app/scan")({
+  validateSearch: (search: Record<string, unknown>): ScanSearch => ({
+    barcode: typeof search["barcode"] === "string" ? search["barcode"] : undefined,
+    productName: typeof search["productName"] === "string" ? search["productName"] : undefined,
+    brand: typeof search["brand"] === "string" ? search["brand"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Scan a package — Nirikshan AI" },
@@ -37,6 +48,7 @@ export const Route = createFileRoute("/app/scan")({
 const CATEGORIES = ["Food & beverages", "Cosmetics", "Household", "Electronics", "Apparel", "Pharmaceutical", "Other"];
 const PACKAGE_TYPES = ["Retail pack", "Wholesale pack", "Multi-piece pack", "Combination pack", "E-commerce listing"];
 const MAX_IMAGES = 6;
+
 
 function Scan() {
   const navigate = useNavigate();
