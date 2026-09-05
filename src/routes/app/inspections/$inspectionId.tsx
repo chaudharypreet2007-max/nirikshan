@@ -135,11 +135,17 @@ function InspectionDetail() {
 
   return (
     <div className="space-y-6">
-      <Button asChild variant="ghost" size="sm" className="-ml-2">
-        <Link to="/app/inspections">
-          <ArrowLeft className="size-4" /> Inspections
-        </Link>
-      </Button>
+      <div className="flex items-center justify-between gap-2">
+        <Button asChild variant="ghost" size="sm" className="-ml-2">
+          <Link to="/app/inspections">
+            <ArrowLeft className="size-4" /> Inspections
+          </Link>
+        </Button>
+        <Button onClick={exportPdf} disabled={downloading} size="sm" className="gap-2">
+          {downloading ? <Loader2 className="size-4 animate-spin" /> : <FileDown className="size-4" />}
+          Export PDF report
+        </Button>
+      </div>
 
       <header className="surface-panel flex flex-wrap items-center gap-6 p-6">
         <ScoreDial score={data.compliance_score ?? 0} status={data.status as ComplianceStatus} />
