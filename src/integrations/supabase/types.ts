@@ -41,6 +41,50 @@ export type Database = {
         }
         Relationships: []
       }
+      barcode_lookup_logs: {
+        Row: {
+          barcode: string
+          barcode_format: string | null
+          created_at: string
+          id: string
+          lookup_source: string
+          lookup_status: string
+          product_id: string | null
+          resulted_in_inspection: boolean
+          user_id: string
+        }
+        Insert: {
+          barcode: string
+          barcode_format?: string | null
+          created_at?: string
+          id?: string
+          lookup_source?: string
+          lookup_status?: string
+          product_id?: string | null
+          resulted_in_inspection?: boolean
+          user_id: string
+        }
+        Update: {
+          barcode?: string
+          barcode_format?: string | null
+          created_at?: string
+          id?: string
+          lookup_source?: string
+          lookup_status?: string
+          product_id?: string | null
+          resulted_in_inspection?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "barcode_lookup_logs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compliance_rules: {
         Row: {
           applicable_package_type: string
@@ -82,6 +126,60 @@ export type Database = {
           version?: number
         }
         Relationships: []
+      }
+      evidence_requests: {
+        Row: {
+          assigned_to: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          inspection_id: string
+          request_description: string | null
+          requested_by: string
+          requested_items: Json
+          review_id: string | null
+          status: string
+        }
+        Insert: {
+          assigned_to: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          inspection_id: string
+          request_description?: string | null
+          requested_by: string
+          requested_items?: Json
+          review_id?: string | null
+          status?: string
+        }
+        Update: {
+          assigned_to?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          inspection_id?: string
+          request_description?: string | null
+          requested_by?: string
+          requested_items?: Json
+          review_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evidence_requests_inspection_id_fkey"
+            columns: ["inspection_id"]
+            isOneToOne: false
+            referencedRelation: "inspections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "evidence_requests_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: false
+            referencedRelation: "supervisor_reviews"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       extracted_declarations: {
         Row: {
@@ -133,6 +231,8 @@ export type Database = {
       inspections: {
         Row: {
           ai_raw: Json | null
+          barcode: string | null
+          barcode_source: string | null
           compliance_score: number | null
           created_at: string
           deleted_at: string | null
@@ -149,12 +249,17 @@ export type Database = {
           location_label: string | null
           longitude: number | null
           organization_id: string | null
+          package_context: string | null
           product_id: string | null
+          product_match_score: number | null
           status: Database["public"]["Enums"]["compliance_status"]
           summary: string | null
+          workflow_status: string
         }
         Insert: {
           ai_raw?: Json | null
+          barcode?: string | null
+          barcode_source?: string | null
           compliance_score?: number | null
           created_at?: string
           deleted_at?: string | null
@@ -171,12 +276,17 @@ export type Database = {
           location_label?: string | null
           longitude?: number | null
           organization_id?: string | null
+          package_context?: string | null
           product_id?: string | null
+          product_match_score?: number | null
           status?: Database["public"]["Enums"]["compliance_status"]
           summary?: string | null
+          workflow_status?: string
         }
         Update: {
           ai_raw?: Json | null
+          barcode?: string | null
+          barcode_source?: string | null
           compliance_score?: number | null
           created_at?: string
           deleted_at?: string | null
@@ -193,9 +303,12 @@ export type Database = {
           location_label?: string | null
           longitude?: number | null
           organization_id?: string | null
+          package_context?: string | null
           product_id?: string | null
+          product_match_score?: number | null
           status?: Database["public"]["Enums"]["compliance_status"]
           summary?: string | null
+          workflow_status?: string
         }
         Relationships: [
           {
@@ -248,6 +361,97 @@ export type Database = {
         }
         Relationships: []
       }
+      product_external_data: {
+        Row: {
+          barcode: string
+          created_at: string
+          external_reference: string | null
+          id: string
+          last_updated: string
+          product_id: string | null
+          raw_data: Json
+          source_name: string
+          verified: boolean
+        }
+        Insert: {
+          barcode: string
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          last_updated?: string
+          product_id?: string | null
+          raw_data?: Json
+          source_name: string
+          verified?: boolean
+        }
+        Update: {
+          barcode?: string
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          last_updated?: string
+          product_id?: string | null
+          raw_data?: Json
+          source_name?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_external_data_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_identity_matches: {
+        Row: {
+          barcode: string | null
+          created_at: string
+          database_manufacturer: string | null
+          database_product_name: string | null
+          id: string
+          inspection_id: string
+          match_score: number | null
+          ocr_manufacturer: string | null
+          ocr_product_name: string | null
+          status: string
+        }
+        Insert: {
+          barcode?: string | null
+          created_at?: string
+          database_manufacturer?: string | null
+          database_product_name?: string | null
+          id?: string
+          inspection_id: string
+          match_score?: number | null
+          ocr_manufacturer?: string | null
+          ocr_product_name?: string | null
+          status?: string
+        }
+        Update: {
+          barcode?: string | null
+          created_at?: string
+          database_manufacturer?: string | null
+          database_product_name?: string | null
+          id?: string
+          inspection_id?: string
+          match_score?: number | null
+          ocr_manufacturer?: string | null
+          ocr_product_name?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_identity_matches_inspection_id_fkey"
+            columns: ["inspection_id"]
+            isOneToOne: false
+            referencedRelation: "inspections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           barcode: string | null
@@ -256,10 +460,13 @@ export type Database = {
           created_by: string | null
           id: string
           manufacturer: string | null
+          net_quantity: string | null
           organization_id: string | null
           package_type: string | null
+          parent_product_id: string | null
           product_category: string | null
           product_name: string
+          variant_name: string | null
         }
         Insert: {
           barcode?: string | null
@@ -268,10 +475,13 @@ export type Database = {
           created_by?: string | null
           id?: string
           manufacturer?: string | null
+          net_quantity?: string | null
           organization_id?: string | null
           package_type?: string | null
+          parent_product_id?: string | null
           product_category?: string | null
           product_name: string
+          variant_name?: string | null
         }
         Update: {
           barcode?: string | null
@@ -280,10 +490,13 @@ export type Database = {
           created_by?: string | null
           id?: string
           manufacturer?: string | null
+          net_quantity?: string | null
           organization_id?: string | null
           package_type?: string | null
+          parent_product_id?: string | null
           product_category?: string | null
           product_name?: string
+          variant_name?: string | null
         }
         Relationships: [
           {
@@ -291,6 +504,13 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "products_parent_product_id_fkey"
+            columns: ["parent_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -335,6 +555,56 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supervisor_reviews: {
+        Row: {
+          decision: string | null
+          id: string
+          inspection_id: string
+          notes: string | null
+          reason: string
+          reviewed_at: string | null
+          reviewer_id: string | null
+          reviewer_notes: string | null
+          status: string
+          submitted_at: string
+          submitted_by: string
+        }
+        Insert: {
+          decision?: string | null
+          id?: string
+          inspection_id: string
+          notes?: string | null
+          reason: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by: string
+        }
+        Update: {
+          decision?: string | null
+          id?: string
+          inspection_id?: string
+          notes?: string | null
+          reason?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          reviewer_notes?: string | null
+          status?: string
+          submitted_at?: string
+          submitted_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supervisor_reviews_inspection_id_fkey"
+            columns: ["inspection_id"]
+            isOneToOne: false
+            referencedRelation: "inspections"
             referencedColumns: ["id"]
           },
         ]

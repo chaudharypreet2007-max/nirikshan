@@ -14,6 +14,9 @@ export type ReportData = {
   inspectionType: string;
   summary: string | null;
   inspectorName: string;
+  barcode?: string | null;
+  barcodeSource?: string | null;
+  matchScore?: number | null;
   declarations: {
     declaration_type: string;
     raw_text: string | null;
@@ -113,6 +116,9 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
   para(`Location: ${data.location}`);
   para(`Inspection type: ${data.inspectionType === "government_enforcement" ? "Government enforcement" : "Private pre-compliance"}`);
   para(`Inspector: ${data.inspectorName}`);
+  para(`Barcode: ${data.barcode ?? "Not detected"}`);
+  if (data.barcode) para(`Barcode source: ${data.barcodeSource ?? "Nirikshan AI Repository"}`);
+  if (data.matchScore != null) para(`Product identity match: ${data.matchScore}%`);
   y += 3;
 
   if (data.summary) {

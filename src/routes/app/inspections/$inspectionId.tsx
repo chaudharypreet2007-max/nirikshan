@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2, User } from "lucide-react";
+import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2, User, Barcode, ScanSearch, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/lib/auth";
+import { ReviewPanel } from "@/components/review-panel";
 import { ScoreDial, StatusChip, SeverityChip, DECLARATION_LABELS, type ComplianceStatus } from "@/components/compliance";
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +44,7 @@ type Violation = {
 
 function InspectionDetail() {
   const { inspectionId } = Route.useParams();
+  const { profile } = useAuth();
   const [downloading, setDownloading] = useState(false);
 
 
@@ -51,7 +54,7 @@ function InspectionDetail() {
       const { data, error } = await supabase
         .from("inspections")
         .select(
-          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, ai_raw, inspector_id, profiles!inspector_id(full_name), products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
+          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, ai_raw, inspector_id, barcode, barcode_source, package_context, product_match_score, workflow_status, profiles!inspector_id(full_name), products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
         )
         .eq("id", inspectionId)
         .maybeSingle();
@@ -143,6 +146,9 @@ function InspectionDetail() {
         inspectionType: data.inspection_type,
         summary: data.summary,
         inspectorName,
+        barcode: data.barcode ?? null,
+        barcodeSource: data.barcode_source ?? null,
+        matchScore: data.product_match_score != null ? Math.round(Number(data.product_match_score)) : null,
         declarations,
         violations,
         evidenceImages: evidenceImages.filter((e): e is { dataUrl: string; label: string } => !!e),
@@ -197,9 +203,47 @@ function InspectionDetail() {
               <User className="size-4" aria-hidden="true" />
               {inspectorName}
             </div>
+            <div className="flex items-center gap-2">
+              <Barcode className="size-4" aria-hidden="true" />
+              {data.barcode ? (
+                <span className="font-mono">{data.barcode}</span>
+              ) : (
+                "Barcode: not detected"
+              )}
+              {data.barcode && data.barcode_source ? ` · ${data.barcode_source}` : ""}
+            </div>
+            {data.product_match_score != null ? (
+              <div className="flex items-center gap-2">
+                <ScanSearch className="size-4" aria-hidden="true" />
+                Product identity match: {Math.round(Number(data.product_match_score))}%
+              </div>
+            ) : null}
           </dl>
         </div>
       </header>
+
+      {data.product_match_score != null && Number(data.product_match_score) < 75 ? (
+        <section className="surface-panel flex gap-3 border-review/40 bg-review-soft p-5">
+          <AlertTriangle className="size-5 shrink-0 text-review" aria-hidden="true" />
+          <div className="text-sm">
+            <p className="font-semibold text-review">
+              {Number(data.product_match_score) < 45 ? "Data mismatch" : "Product identity uncertain"}
+            </p>
+            <p className="mt-1 text-muted-foreground">
+              The barcode record and the package declaration do not fully agree (match{" "}
+              {Math.round(Number(data.product_match_score))}%). Manual verification is required — this is not, by
+              itself, evidence of fraud.
+            </p>
+          </div>
+        </section>
+      ) : null}
+
+      <ReviewPanel
+        inspectionId={inspectionId}
+        isOwner={data.inspector_id === profile?.id}
+        workflowStatus={(data as { workflow_status?: string }).workflow_status ?? null}
+        imagePaths={imagePaths}
+      />
 
       {data.summary ? (
         <section className="surface-panel p-5">

@@ -17,7 +17,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+type ScanSearch = {
+  barcode?: string | undefined;
+  productName?: string | undefined;
+  brand?: string | undefined;
+};
+
 export const Route = createFileRoute("/app/scan")({
+  validateSearch: (search: Record<string, unknown>): ScanSearch => ({
+    barcode: typeof search["barcode"] === "string" ? search["barcode"] : undefined,
+    productName: typeof search["productName"] === "string" ? search["productName"] : undefined,
+    brand: typeof search["brand"] === "string" ? search["brand"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Scan a package — Nirikshan AI" },
@@ -38,22 +49,26 @@ const CATEGORIES = ["Food & beverages", "Cosmetics", "Household", "Electronics",
 const PACKAGE_TYPES = ["Retail pack", "Wholesale pack", "Multi-piece pack", "Combination pack", "E-commerce listing"];
 const MAX_IMAGES = 6;
 
+
 function Scan() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const { isGovernment } = useAuth();
   const analyze = useServerFn(analyzeLabel);
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
 
   const [files, setFiles] = useState<{ file: File; preview: string }[]>([]);
-  const [productName, setProductName] = useState("");
-  const [brand, setBrand] = useState("");
+  const [productName, setProductName] = useState(search.productName ?? "");
+  const [brand, setBrand] = useState(search.brand ?? "");
+  const [barcode, setBarcode] = useState(search.barcode ?? "");
   const [category, setCategory] = useState(CATEGORIES[0]!);
   const [packageType, setPackageType] = useState(PACKAGE_TYPES[0]!);
   const [imported, setImported] = useState("false");
   const [locationLabel, setLocationLabel] = useState("");
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
+
 
   const pick = (list: FileList | null) => {
     const picked = Array.from(list ?? []);
@@ -157,6 +172,12 @@ function Scan() {
           latitude: coords?.lat,
           longitude: coords?.lng,
           locationLabel: locationLabel || undefined,
+          barcode: barcode.trim() ? barcode.trim() : null,
+          barcodeSource: barcode.trim() ? (search.barcode ? "scanned" : "manual") : null,
+          barcodeProductName: search.productName ?? null,
+          barcodeManufacturer: null,
+          packageContext: packageType,
+
         },
       });
 
@@ -273,6 +294,26 @@ function Scan() {
             <Label htmlFor="brand">Brand (optional)</Label>
             <Input id="brand" className="h-11" value={brand} onChange={(e) => setBrand(e.target.value)} />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="barcode">Barcode (optional)</Label>
+            <div className="flex gap-2">
+              <Input
+                id="barcode"
+                className="h-11 font-mono"
+                inputMode="numeric"
+                placeholder="Scan or type the product barcode"
+                value={barcode}
+                onChange={(e) => setBarcode(e.target.value)}
+              />
+              <Button type="button" variant="outline" className="h-11 shrink-0" onClick={() => navigate({ to: "/app/barcode" })}>
+                Scan
+              </Button>
+            </div>
+            {search.barcode ? (
+              <p className="text-xs text-muted-foreground">Product identified from a scanned barcode.</p>
+            ) : null}
+          </div>
+
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Picker label="Category" value={category} onChange={setCategory} options={CATEGORIES} />

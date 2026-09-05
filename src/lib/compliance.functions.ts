@@ -13,7 +13,25 @@ const AnalyzeInput = z.object({
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
   locationLabel: z.string().nullable().optional(),
+  barcode: z.string().trim().min(4).max(64).nullable().optional(),
+  barcodeSource: z.string().max(64).nullable().optional(),
+  barcodeProductName: z.string().nullable().optional(),
+  barcodeManufacturer: z.string().nullable().optional(),
+  packageContext: z.string().max(64).nullable().optional(),
 });
+
+/** Token-overlap similarity, 0-1. */
+function similarity(a?: string | null, b?: string | null) {
+  if (!a || !b) return null;
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
+  const x = norm(a);
+  const y = norm(b);
+  if (!x.length || !y.length) return null;
+  const setY = new Set(y);
+  const hits = x.filter((t) => setY.has(t)).length;
+  return (2 * hits) / (x.length + y.length);
+}
+
 
 type Declaration = {
   declaration_type: string;
@@ -203,24 +221,65 @@ Return JSON with this exact shape:
       .eq("id", userId)
       .maybeSingle();
 
-    const { data: product, error: productError } = await supabase
-      .from("products")
-      .insert({
-        product_name: data.productName || ai.product_name || "Unidentified product",
-        brand: data.brand || ai.brand,
-        package_type: data.packageType || ai.package_type,
-        product_category: data.productCategory || ai.product_category,
-        organization_id: profile?.organization_id ?? null,
-        created_by: userId,
-      })
-      .select("id")
-      .single();
-    if (productError) throw new Error(productError.message);
+    const barcode = data.barcode?.trim() || null;
+
+    // Avoid duplicate product records for the same barcode: reuse the officer's own
+    // record, otherwise create a variant linked to the existing parent product.
+    let existingId: string | null = null;
+    let parentId: string | null = null;
+    if (barcode) {
+      const { data: existing } = await supabase
+        .from("products")
+        .select("id, created_by")
+        .eq("barcode", barcode)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (existing) {
+        if (existing.created_by === userId) existingId = existing.id;
+        else parentId = existing.id;
+      }
+    }
+
+    const resolvedName = data.productName || ai.product_name || "Unidentified product";
+    let productId: string;
+    if (existingId) {
+      productId = existingId;
+    } else {
+      const { data: product, error: productError } = await supabase
+        .from("products")
+        .insert({
+          product_name: resolvedName,
+          brand: data.brand || ai.brand,
+          package_type: data.packageType || ai.package_type,
+          product_category: data.productCategory || ai.product_category,
+          barcode,
+          parent_product_id: parentId,
+          variant_name: parentId ? (data.packageType || ai.package_type || "Variant") : null,
+          net_quantity: declarations.find((d) => d.declaration_type === "net_quantity")?.normalized_value ?? null,
+          organization_id: profile?.organization_id ?? null,
+          created_by: userId,
+        })
+        .select("id")
+        .single();
+      if (productError) throw new Error(productError.message);
+      productId = product.id;
+    }
+
+    const ocrManufacturer =
+      declarations.find((d) => d.declaration_type === "manufacturer_details")?.normalized_value ??
+      declarations.find((d) => d.declaration_type === "manufacturer_details")?.raw_text ??
+      null;
+
+    const nameScore = similarity(data.barcodeProductName, ai.product_name ?? resolvedName);
+    const mfrScore = similarity(data.barcodeManufacturer, ocrManufacturer);
+    const parts = [nameScore, mfrScore].filter((n): n is number => n != null);
+    const matchScore = parts.length ? Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100) : null;
 
     const { data: inspection, error: inspectionError } = await supabase
       .from("inspections")
       .insert({
-        product_id: product.id,
+        product_id: productId,
         inspector_id: userId,
         organization_id: profile?.organization_id ?? null,
         inspection_type: data.inspectionType,
@@ -231,12 +290,30 @@ Return JSON with this exact shape:
         image_quality_score: clamp(ai.image_quality_score ?? 0),
         compliance_score: score,
         status,
+        barcode,
+        barcode_source: barcode ? (data.barcodeSource ?? "scanned") : null,
+        package_context: data.packageContext ?? data.packageType ?? null,
+        product_match_score: matchScore,
         summary: ai.summary ?? null,
         ai_raw: JSON.parse(JSON.stringify({ ...ai, image_paths: data.imagePaths })),
       })
       .select("id")
       .single();
     if (inspectionError) throw new Error(inspectionError.message);
+
+    if (barcode && (data.barcodeProductName || data.barcodeManufacturer)) {
+      await supabase.from("product_identity_matches").insert({
+        inspection_id: inspection.id,
+        barcode,
+        ocr_product_name: ai.product_name ?? resolvedName,
+        database_product_name: data.barcodeProductName ?? null,
+        ocr_manufacturer: ocrManufacturer,
+        database_manufacturer: data.barcodeManufacturer ?? null,
+        match_score: matchScore,
+        status: matchScore == null ? "unknown" : matchScore >= 75 ? "matched" : matchScore >= 45 ? "uncertain" : "mismatch",
+      });
+    }
+
 
     if (declarations.length) {
       await supabase.from("extracted_declarations").insert(

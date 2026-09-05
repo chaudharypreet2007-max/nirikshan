@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AppBarcodeRouteImport } from './routes/app/barcode'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppRulesRouteImport } from './routes/app/rules'
 import { Route as AppScanRouteImport } from './routes/app/scan'
@@ -18,6 +19,8 @@ import { Route as AuthCompanyRouteImport } from './routes/auth.company'
 import { Route as AuthGovernmentRouteImport } from './routes/auth.government'
 import { Route as AppInspectionsIndexRouteImport } from './routes/app/inspections/index'
 import { Route as AppInspectionsInspectionIdRouteImport } from './routes/app/inspections/$inspectionId'
+import { Route as AppReviewsIndexRouteImport } from './routes/app/reviews/index'
+import { Route as AppReviewsReviewIdRouteImport } from './routes/app/reviews/$reviewId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,6 +31,11 @@ const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppBarcodeRoute = AppBarcodeRouteImport.update({
+  id: '/barcode',
+  path: '/barcode',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
@@ -65,75 +73,103 @@ const AppInspectionsInspectionIdRoute =
     path: '/inspections/$inspectionId',
     getParentRoute: () => AppRoute,
   } as any)
+const AppReviewsIndexRoute = AppReviewsIndexRouteImport.update({
+  id: '/reviews/',
+  path: '/reviews/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReviewsReviewIdRoute = AppReviewsReviewIdRouteImport.update({
+  id: '/reviews/$reviewId',
+  path: '/reviews/$reviewId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/barcode': typeof AppBarcodeRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
+  '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
+  '/app/reviews/': typeof AppReviewsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/barcode': typeof AppBarcodeRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
+  '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections': typeof AppInspectionsIndexRoute
+  '/app/reviews': typeof AppReviewsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/app/barcode': typeof AppBarcodeRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
+  '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
+  '/app/reviews/': typeof AppReviewsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/app'
+    | '/app/barcode'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
     | '/app/inspections/$inspectionId'
+    | '/app/reviews/$reviewId'
     | '/app/inspections/'
+    | '/app/reviews/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/app'
+    | '/app/barcode'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
     | '/app/inspections/$inspectionId'
+    | '/app/reviews/$reviewId'
     | '/app/inspections'
+    | '/app/reviews'
   id:
     | '__root__'
     | '/'
     | '/app'
+    | '/app/barcode'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
     | '/app/inspections/$inspectionId'
+    | '/app/reviews/$reviewId'
     | '/app/inspections/'
+    | '/app/reviews/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +194,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/app/barcode': {
+      id: '/app/barcode'
+      path: '/barcode'
+      fullPath: '/app/barcode'
+      preLoaderRoute: typeof AppBarcodeRouteImport
+      parentRoute: typeof AppRoute
     }
     '/app/dashboard': {
       id: '/app/dashboard'
@@ -208,23 +251,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInspectionsInspectionIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/reviews/': {
+      id: '/app/reviews/'
+      path: '/reviews'
+      fullPath: '/app/reviews/'
+      preLoaderRoute: typeof AppReviewsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/reviews/$reviewId': {
+      id: '/app/reviews/$reviewId'
+      path: '/reviews/$reviewId'
+      fullPath: '/app/reviews/$reviewId'
+      preLoaderRoute: typeof AppReviewsReviewIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppBarcodeRoute: typeof AppBarcodeRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppRulesRoute: typeof AppRulesRoute
   AppScanRoute: typeof AppScanRoute
   AppInspectionsInspectionIdRoute: typeof AppInspectionsInspectionIdRoute
+  AppReviewsReviewIdRoute: typeof AppReviewsReviewIdRoute
   AppInspectionsIndexRoute: typeof AppInspectionsIndexRoute
+  AppReviewsIndexRoute: typeof AppReviewsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppBarcodeRoute: AppBarcodeRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppRulesRoute: AppRulesRoute,
   AppScanRoute: AppScanRoute,
   AppInspectionsInspectionIdRoute: AppInspectionsInspectionIdRoute,
+  AppReviewsReviewIdRoute: AppReviewsReviewIdRoute,
   AppInspectionsIndexRoute: AppInspectionsIndexRoute,
+  AppReviewsIndexRoute: AppReviewsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
