@@ -140,6 +140,7 @@ function InspectionDetail() {
         location,
         inspectionType: data.inspection_type,
         summary: data.summary,
+        inspectorName,
         declarations,
         violations,
         evidenceImages: evidenceImages.filter((e): e is { dataUrl: string; label: string } => !!e),
