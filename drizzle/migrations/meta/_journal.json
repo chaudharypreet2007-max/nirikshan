@@ -64,6 +64,13 @@
       "when": 1788596074848,
       "tag": "0008_barcode_intelligence_and_supervisor_review",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788596665881,
+      "tag": "0009_restrict_reference_data_reads",
+      "breakpoints": true
     }
   ]
 }
