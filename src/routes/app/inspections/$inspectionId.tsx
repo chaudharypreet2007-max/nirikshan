@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2 } from "lucide-react";
+import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { ScoreDial, StatusChip, SeverityChip, DECLARATION_LABELS, type ComplianceStatus } from "@/components/compliance";
 import { Button } from "@/components/ui/button";
@@ -51,7 +51,7 @@ function InspectionDetail() {
       const { data, error } = await supabase
         .from("inspections")
         .select(
-          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, ai_raw, products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
+          "id, compliance_score, status, inspection_date, location_label, latitude, longitude, image_path, summary, inspection_type, image_quality_score, ai_raw, inspector_id, profiles!inspector_id(full_name), products(product_name, brand, product_category, package_type), extracted_declarations(id, declaration_type, raw_text, normalized_value, validation_status, confidence_score, notes), violations(id, rule_code, violation_type, description, evidence, severity, recommendation)",
         )
         .eq("id", inspectionId)
         .maybeSingle();
@@ -100,6 +100,8 @@ function InspectionDetail() {
   const product = data.products as unknown as
     | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null }
     | null;
+  const inspector = data.profiles as unknown as { full_name: string | null } | null;
+  const inspectorName = inspector?.full_name ?? "Inspector";
 
   const exportPdf = async () => {
     setDownloading(true);
@@ -138,6 +140,7 @@ function InspectionDetail() {
         location,
         inspectionType: data.inspection_type,
         summary: data.summary,
+        inspectorName,
         declarations,
         violations,
         evidenceImages: evidenceImages.filter((e): e is { dataUrl: string; label: string } => !!e),
@@ -188,7 +191,10 @@ function InspectionDetail() {
               {product?.package_type ?? "Package type not set"}
               {product?.product_category ? ` · ${product.product_category}` : ""}
             </div>
-
+            <div className="flex items-center gap-2">
+              <User className="size-4" aria-hidden="true" />
+              {inspectorName}
+            </div>
           </dl>
         </div>
       </header>
