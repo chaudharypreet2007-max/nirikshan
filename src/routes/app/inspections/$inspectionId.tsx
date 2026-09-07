@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2, User, Barcode, ScanSearch, AlertTriangle } from "lucide-react";
+import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2, User, ScanSearch, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { ReviewPanel } from "@/components/review-panel";
@@ -202,15 +202,6 @@ function InspectionDetail() {
             <div className="flex items-center gap-2">
               <User className="size-4" aria-hidden="true" />
               {inspectorName}
-            </div>
-            <div className="flex items-center gap-2">
-              <Barcode className="size-4" aria-hidden="true" />
-              {data.barcode ? (
-                <span className="font-mono">{data.barcode}</span>
-              ) : (
-                "Barcode: not detected"
-              )}
-              {data.barcode && data.barcode_source ? ` · ${data.barcode_source}` : ""}
             </div>
             {data.product_match_score != null ? (
               <div className="flex items-center gap-2">

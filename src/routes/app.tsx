@@ -5,7 +5,6 @@ import {
   ScanLine,
   ClipboardList,
   ClipboardCheck,
-  Barcode,
   Gavel,
   LogOut,
   Menu,
@@ -25,7 +24,6 @@ export const Route = createFileRoute("/app")({
 const NAV = [
   { to: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/app/scan", label: "Scan package", icon: ScanLine },
-  { to: "/app/barcode", label: "Barcode scanner", icon: Barcode },
   { to: "/app/inspections", label: "Inspections", icon: ClipboardList },
   { to: "/app/reviews", label: "Supervisor review", icon: ClipboardCheck },
   { to: "/app/rules", label: "Rule engine", icon: Gavel },
