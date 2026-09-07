@@ -360,53 +360,59 @@ const googleSearch: ProductLookupProvider = {
 };
 
 /**
- * Keyless web-search fallback (DuckDuckGo HTML endpoint). Used when no Google
- * API key is configured, so scanning still surfaces a product name for packs
- * that are absent from the open product databases.
+ * Keyless web-search fallback (Bing RSS feed — structured, no API key). Used
+ * so scanning still surfaces a product name for packs that are absent from the
+ * open product databases. Reference only, never compliance evidence.
  */
 const webSearch: ProductLookupProvider = {
   name: "Web search (open)",
   lookup: async (barcode) => {
     const res = await fetch(
-      `https://html.duckduckgo.com/html/?q=${encodeURIComponent(`"${barcode}" product`)}`,
+      `https://www.bing.com/search?format=rss&count=10&q=${encodeURIComponent(`${barcode} product`)}`,
       {
         headers: {
-          "User-Agent": "Mozilla/5.0 (compatible; NirikshanAI/1.0)",
-          Accept: "text/html",
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+          Accept: "application/rss+xml,text/xml,*/*",
         },
       },
     );
     if (!res.ok) throw new Error(`Web search responded ${res.status}`);
-    const html = await res.text();
-    const titles = [...html.matchAll(/class="result__a"[^>]*>([\s\S]*?)<\/a>/g)]
-      .map((m) => cleanTitle(m[1] ?? ""))
-      .filter((t): t is string => !!t);
-    const snippet = cleanTitle(
-      /class="result__snippet"[^>]*>([\s\S]*?)<\/a>/.exec(html)?.[1] ?? "",
-    );
-    const title = titles[0];
-    if (!title) return null;
-    const qty = title.match(/([\d.]+\s?(?:g|kg|ml|l|litre|gm))\b/i)?.[1] ?? null;
-    const { quantity, unit } = splitQuantity(qty);
-    const draft = {
-      barcode,
-      product_name: title,
-      brand: null,
-      manufacturer: null,
-      category: null,
-      description: snippet,
-      package_quantity: quantity,
-      unit,
-      country: gs1Country(barcode),
-      ingredients: null,
-      image_url: null,
-      source: "Web search (open)",
-      external_product_id: barcode,
-      fetched_at: new Date().toISOString(),
-    };
-    return { ...draft, confidence: Math.min(55, scoreCompleteness(draft)) };
+    const xml = await res.text();
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1] ?? "");
+    const digits = barcode.replace(/\D/g, "");
+    for (const item of items) {
+      const rawTitle = /<title>([\s\S]*?)<\/title>/.exec(item)?.[1] ?? "";
+      const rawDesc = /<description>([\s\S]*?)<\/description>/.exec(item)?.[1] ?? "";
+      const title = cleanTitle(rawTitle);
+      const snippet = cleanTitle(rawDesc);
+      if (!title) continue;
+      // Ignore generic barcode-directory pages that echo the number back.
+      if (title.replace(/\D/g, "") === digits) continue;
+      const qty = title.match(/([\d.]+\s?(?:g|kg|ml|l|litre|gm))\b/i)?.[1] ?? null;
+      const { quantity, unit } = splitQuantity(qty);
+      const draft = {
+        barcode,
+        product_name: title,
+        brand: null,
+        manufacturer: null,
+        category: null,
+        description: snippet,
+        package_quantity: quantity,
+        unit,
+        country: gs1Country(barcode),
+        ingredients: null,
+        image_url: null,
+        source: "Web search (open)",
+        external_product_id: barcode,
+        fetched_at: new Date().toISOString(),
+      };
+      return { ...draft, confidence: Math.min(55, scoreCompleteness(draft)) };
+    }
+    return null;
   },
 };
+
 
 const providers: ProductLookupProvider[] = [
   configuredProvider,
