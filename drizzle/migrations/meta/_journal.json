@@ -78,6 +78,20 @@
       "when": 1788789739781,
       "tag": "0010_lock_profile_jurisdiction_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1788790393480,
+      "tag": "0011_external_product_discovery",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788790454820,
+      "tag": "0012_external_product_data_versioning",
+      "breakpoints": true
     }
   ]
 }

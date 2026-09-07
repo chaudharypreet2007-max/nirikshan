@@ -364,35 +364,68 @@ export type Database = {
       product_external_data: {
         Row: {
           barcode: string
+          brand: string | null
+          category: string | null
+          country: string | null
           created_at: string
+          expires_at: string | null
+          external_product_id: string | null
           external_reference: string | null
+          fetched_at: string
           id: string
           last_updated: string
+          manufacturer: string | null
+          package_quantity: string | null
           product_id: string | null
+          product_image_url: string | null
+          product_name: string | null
           raw_data: Json
           source_name: string
+          unit: string | null
           verified: boolean
         }
         Insert: {
           barcode: string
+          brand?: string | null
+          category?: string | null
+          country?: string | null
           created_at?: string
+          expires_at?: string | null
+          external_product_id?: string | null
           external_reference?: string | null
+          fetched_at?: string
           id?: string
           last_updated?: string
+          manufacturer?: string | null
+          package_quantity?: string | null
           product_id?: string | null
+          product_image_url?: string | null
+          product_name?: string | null
           raw_data?: Json
           source_name: string
+          unit?: string | null
           verified?: boolean
         }
         Update: {
           barcode?: string
+          brand?: string | null
+          category?: string | null
+          country?: string | null
           created_at?: string
+          expires_at?: string | null
+          external_product_id?: string | null
           external_reference?: string | null
+          fetched_at?: string
           id?: string
           last_updated?: string
+          manufacturer?: string | null
+          package_quantity?: string | null
           product_id?: string | null
+          product_image_url?: string | null
+          product_name?: string | null
           raw_data?: Json
           source_name?: string
+          unit?: string | null
           verified?: boolean
         }
         Relationships: [
@@ -411,9 +444,13 @@ export type Database = {
           created_at: string
           database_manufacturer: string | null
           database_product_name: string | null
+          external_brand: string | null
+          external_product_id: string | null
+          external_product_name: string | null
           id: string
           inspection_id: string
           match_score: number | null
+          ocr_brand: string | null
           ocr_manufacturer: string | null
           ocr_product_name: string | null
           status: string
@@ -423,9 +460,13 @@ export type Database = {
           created_at?: string
           database_manufacturer?: string | null
           database_product_name?: string | null
+          external_brand?: string | null
+          external_product_id?: string | null
+          external_product_name?: string | null
           id?: string
           inspection_id: string
           match_score?: number | null
+          ocr_brand?: string | null
           ocr_manufacturer?: string | null
           ocr_product_name?: string | null
           status?: string
@@ -435,9 +476,13 @@ export type Database = {
           created_at?: string
           database_manufacturer?: string | null
           database_product_name?: string | null
+          external_brand?: string | null
+          external_product_id?: string | null
+          external_product_name?: string | null
           id?: string
           inspection_id?: string
           match_score?: number | null
+          ocr_brand?: string | null
           ocr_manufacturer?: string | null
           ocr_product_name?: string | null
           status?: string
@@ -458,7 +503,12 @@ export type Database = {
           brand: string | null
           created_at: string
           created_by: string | null
+          external_data: Json | null
+          external_last_updated: string | null
+          external_product_id: string | null
+          external_source: string | null
           id: string
+          inspection_status: string
           manufacturer: string | null
           net_quantity: string | null
           organization_id: string | null
@@ -473,7 +523,12 @@ export type Database = {
           brand?: string | null
           created_at?: string
           created_by?: string | null
+          external_data?: Json | null
+          external_last_updated?: string | null
+          external_product_id?: string | null
+          external_source?: string | null
           id?: string
+          inspection_status?: string
           manufacturer?: string | null
           net_quantity?: string | null
           organization_id?: string | null
@@ -488,7 +543,12 @@ export type Database = {
           brand?: string | null
           created_at?: string
           created_by?: string | null
+          external_data?: Json | null
+          external_last_updated?: string | null
+          external_product_id?: string | null
+          external_source?: string | null
           id?: string
+          inspection_status?: string
           manufacturer?: string | null
           net_quantity?: string | null
           organization_id?: string | null
