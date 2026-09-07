@@ -85,6 +85,13 @@
       "when": 1788790393480,
       "tag": "0011_external_product_discovery",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1788790454820,
+      "tag": "0012_external_product_data_versioning",
+      "breakpoints": true
     }
   ]
 }
