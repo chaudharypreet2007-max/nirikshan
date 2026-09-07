@@ -298,15 +298,134 @@ const configuredProvider: ProductLookupProvider = {
   },
 };
 
+/** Strip marketplace noise from a search-result title. */
+function cleanTitle(raw: string): string | null {
+  let t = raw
+    .replace(/&#(\d+);/g, (_, d) => String.fromCharCode(Number(d)))
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;|&#39;/g, "'")
+    .replace(/<[^>]*>/g, "")
+    .trim();
+  // Drop trailing site names: "Product Name | Amazon.in", "Product - Flipkart"
+  t = t.split(/\s+[|–—]\s+/)[0]!.trim();
+  t = t.replace(/\s*[-:]\s*(buy|shop|price|online|amazon|flipkart|bigbasket|jiomart|walmart|ebay|barcode.*)\b.*$/i, "").trim();
+  t = t.replace(/^\s*(barcode|ean|upc|gtin)\s*[:#-]?\s*\d{8,14}\s*[-–|:]?\s*/i, "").trim();
+  if (t.length < 4 || /^\d+$/.test(t)) return null;
+  return t.slice(0, 160);
+}
+
+/**
+ * Google Programmable Search (Custom Search JSON API).
+ * Server-side only; enabled when both keys are configured.
+ *   GOOGLE_CSE_API_KEY, GOOGLE_CSE_CX
+ */
+const googleSearch: ProductLookupProvider = {
+  name: "Google product search",
+  enabled: () => !!(process.env["GOOGLE_CSE_API_KEY"] && process.env["GOOGLE_CSE_CX"]),
+  lookup: async (barcode) => {
+    const url =
+      `https://www.googleapis.com/customsearch/v1?key=${encodeURIComponent(process.env["GOOGLE_CSE_API_KEY"]!)}` +
+      `&cx=${encodeURIComponent(process.env["GOOGLE_CSE_CX"]!)}&num=5&q=${encodeURIComponent(barcode)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Google search responded ${res.status}`);
+    const json = (await res.json()) as { items?: Array<Record<string, unknown>> };
+    const items = json.items ?? [];
+    for (const it of items) {
+      const title = cleanTitle(String(it["title"] ?? ""));
+      if (!title) continue;
+      const pagemap = it["pagemap"] as Record<string, unknown> | undefined;
+      const cse = (pagemap?.["cse_image"] as Array<Record<string, unknown>> | undefined)?.[0];
+      const meta = (pagemap?.["metatags"] as Array<Record<string, unknown>> | undefined)?.[0];
+      const draft = {
+        barcode,
+        product_name: title,
+        brand: null,
+        manufacturer: null,
+        category: null,
+        description: nonEmpty(it["snippet"]),
+        package_quantity: splitQuantity(title.match(/([\d.]+\s?(?:g|kg|ml|l|litre|gm))\b/i)?.[1] ?? null).quantity,
+        unit: splitQuantity(title.match(/([\d.]+\s?(?:g|kg|ml|l|litre|gm))\b/i)?.[1] ?? null).unit,
+        country: gs1Country(barcode),
+        ingredients: null,
+        image_url: nonEmpty(cse?.["src"]) ?? nonEmpty(meta?.["og:image"]),
+        source: "Google product search",
+        external_product_id: nonEmpty(it["link"]) ?? barcode,
+        fetched_at: new Date().toISOString(),
+      };
+      return { ...draft, confidence: Math.min(70, scoreCompleteness(draft)) };
+    }
+    return null;
+  },
+};
+
+/**
+ * Keyless web-search fallback (Bing RSS feed — structured, no API key). Used
+ * so scanning still surfaces a product name for packs that are absent from the
+ * open product databases. Reference only, never compliance evidence.
+ */
+const webSearch: ProductLookupProvider = {
+  name: "Web search (open)",
+  lookup: async (barcode) => {
+    const res = await fetch(
+      `https://www.bing.com/search?format=rss&count=10&q=${encodeURIComponent(`${barcode} product`)}`,
+      {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+          Accept: "application/rss+xml,text/xml,*/*",
+        },
+      },
+    );
+    if (!res.ok) throw new Error(`Web search responded ${res.status}`);
+    const xml = await res.text();
+    const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)].map((m) => m[1] ?? "");
+    const digits = barcode.replace(/\D/g, "");
+    for (const item of items) {
+      const rawTitle = /<title>([\s\S]*?)<\/title>/.exec(item)?.[1] ?? "";
+      const rawDesc = /<description>([\s\S]*?)<\/description>/.exec(item)?.[1] ?? "";
+      const title = cleanTitle(rawTitle);
+      const snippet = cleanTitle(rawDesc);
+      if (!title) continue;
+      // Ignore generic barcode-directory pages that echo the number back.
+      if (title.replace(/\D/g, "") === digits) continue;
+      const qty = title.match(/([\d.]+\s?(?:g|kg|ml|l|litre|gm))\b/i)?.[1] ?? null;
+      const { quantity, unit } = splitQuantity(qty);
+      const draft = {
+        barcode,
+        product_name: title,
+        brand: null,
+        manufacturer: null,
+        category: null,
+        description: snippet,
+        package_quantity: quantity,
+        unit,
+        country: gs1Country(barcode),
+        ingredients: null,
+        image_url: null,
+        source: "Web search (open)",
+        external_product_id: barcode,
+        fetched_at: new Date().toISOString(),
+      };
+      return { ...draft, confidence: Math.min(55, scoreCompleteness(draft)) };
+    }
+    return null;
+  },
+};
+
+
 const providers: ProductLookupProvider[] = [
   configuredProvider,
   openFoodFacts,
   openProductsFacts,
   openBeautyFacts,
   upcItemDb,
+  googleSearch,
+  webSearch,
   // Always last: basic barcode registry information when nothing else matches.
   gs1Registry,
 ];
+
 
 export function registerProductLookupProvider(provider: ProductLookupProvider, position: "primary" | "fallback" = "fallback") {
   if (position === "primary") providers.unshift(provider);
