@@ -212,8 +212,13 @@ function BarcodePage() {
                     </p>
                     <h2 className="mt-1 font-display text-xl font-bold">
                       {ext.product?.productName ??
-                        (ext.status === "error" ? "Product database unavailable" : "Product not found")}
+                        (ext.product
+                          ? "Product name not listed"
+                          : ext.status === "error"
+                            ? "Product database unavailable"
+                            : "Product not found")}
                     </h2>
+
                   </div>
                   {ext.product ? (
                     <span className="rounded-full bg-muted px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
