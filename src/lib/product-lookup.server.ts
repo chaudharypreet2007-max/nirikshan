@@ -298,7 +298,15 @@ const configuredProvider: ProductLookupProvider = {
   },
 };
 
-const providers: ProductLookupProvider[] = [configuredProvider, openFoodFacts];
+const providers: ProductLookupProvider[] = [
+  configuredProvider,
+  openFoodFacts,
+  openProductsFacts,
+  openBeautyFacts,
+  upcItemDb,
+  // Always last: basic barcode registry information when nothing else matches.
+  gs1Registry,
+];
 
 export function registerProductLookupProvider(provider: ProductLookupProvider, position: "primary" | "fallback" = "fallback") {
   if (position === "primary") providers.unshift(provider);
