@@ -239,6 +239,8 @@ function BarcodePage() {
                       />
                       <Field label="Country" value={ext.product.country} />
                       <Field label="Barcode" value={result?.barcode} mono />
+                      <Field label="Details" value={ext.product.description} />
+
                     </dl>
 
                     <div className="mt-4 rounded-lg border border-border px-4 py-3 text-sm">
