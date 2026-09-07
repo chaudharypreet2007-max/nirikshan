@@ -212,8 +212,13 @@ function BarcodePage() {
                     </p>
                     <h2 className="mt-1 font-display text-xl font-bold">
                       {ext.product?.productName ??
-                        (ext.status === "error" ? "Product database unavailable" : "Product not found")}
+                        (ext.product
+                          ? "Product name not listed"
+                          : ext.status === "error"
+                            ? "Product database unavailable"
+                            : "Product not found")}
                     </h2>
+
                   </div>
                   {ext.product ? (
                     <span className="rounded-full bg-muted px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
@@ -234,6 +239,8 @@ function BarcodePage() {
                       />
                       <Field label="Country" value={ext.product.country} />
                       <Field label="Barcode" value={result?.barcode} mono />
+                      <Field label="Details" value={ext.product.description} />
+
                     </dl>
 
                     <div className="mt-4 rounded-lg border border-border px-4 py-3 text-sm">
