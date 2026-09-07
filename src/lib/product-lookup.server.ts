@@ -340,7 +340,7 @@ const googleSearch: ProductLookupProvider = {
       const draft = {
         barcode,
         product_name: title,
-        brand: nonEmpty(meta?.["og:site_name"]) ? null : null,
+        brand: null,
         manufacturer: null,
         category: null,
         description: nonEmpty(it["snippet"]),
