@@ -301,18 +301,25 @@ Return JSON with this exact shape:
       .single();
     if (inspectionError) throw new Error(inspectionError.message);
 
+    // The product has now had a real physical inspection.
+    await supabase.from("products").update({ inspection_status: "inspected" }).eq("id", productId);
+
     if (barcode && (data.barcodeProductName || data.barcodeManufacturer)) {
       await supabase.from("product_identity_matches").insert({
         inspection_id: inspection.id,
         barcode,
         ocr_product_name: ai.product_name ?? resolvedName,
         database_product_name: data.barcodeProductName ?? null,
+        external_product_name: data.barcodeProductName ?? null,
         ocr_manufacturer: ocrManufacturer,
         database_manufacturer: data.barcodeManufacturer ?? null,
+        external_brand: data.brand ?? null,
+        ocr_brand: ai.brand ?? null,
         match_score: matchScore,
         status: matchScore == null ? "unknown" : matchScore >= 75 ? "matched" : matchScore >= 45 ? "uncertain" : "mismatch",
       });
     }
+
 
 
     if (declarations.length) {
