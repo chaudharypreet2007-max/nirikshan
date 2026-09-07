@@ -84,7 +84,7 @@ function Inspections() {
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <Input
             className="h-11 pl-9"
-            placeholder="Search product, brand, barcode, location or inspection ID"
+            placeholder="Search product, brand, location or inspection ID"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             aria-label="Search inspections"
