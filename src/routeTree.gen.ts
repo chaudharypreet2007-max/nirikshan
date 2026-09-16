@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppRulesRouteImport } from './routes/app/rules'
 import { Route as AppScanRouteImport } from './routes/app/scan'
@@ -26,10 +28,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
@@ -80,12 +92,14 @@ const AppReviewsReviewIdRoute = AppReviewsReviewIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
@@ -99,6 +113,7 @@ export interface FileRoutesByTo {
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
+  '/admin': typeof AdminIndexRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections': typeof AppInspectionsIndexRoute
@@ -107,12 +122,14 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
@@ -122,12 +139,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/app'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
+    | '/admin/'
     | '/app/inspections/$inspectionId'
     | '/app/reviews/$reviewId'
     | '/app/inspections/'
@@ -141,6 +160,7 @@ export interface FileRouteTypes {
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
+    | '/admin'
     | '/app/inspections/$inspectionId'
     | '/app/reviews/$reviewId'
     | '/app/inspections'
@@ -148,12 +168,14 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/app'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
+    | '/admin/'
     | '/app/inspections/$inspectionId'
     | '/app/reviews/$reviewId'
     | '/app/inspections/'
@@ -162,6 +184,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
   AuthCompanyRoute: typeof AuthCompanyRoute
   AuthGovernmentRoute: typeof AuthGovernmentRoute
@@ -176,12 +199,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/app/dashboard': {
       id: '/app/dashboard'
@@ -249,6 +286,16 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppRulesRoute: typeof AppRulesRoute
@@ -273,6 +320,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
   AuthCompanyRoute: AuthCompanyRoute,
   AuthGovernmentRoute: AuthGovernmentRoute,
