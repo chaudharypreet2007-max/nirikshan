@@ -99,6 +99,13 @@
       "when": 1789566489880,
       "tag": "0013_add_main_admin_role",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1789566546306,
+      "tag": "0014_main_admin_platform_administration",
+      "breakpoints": true
     }
   ]
 }

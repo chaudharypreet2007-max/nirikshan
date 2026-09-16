@@ -342,6 +342,8 @@ export type Database = {
           name: string
           organization_type: Database["public"]["Enums"]["org_type"]
           registration_number: string | null
+          status: string
+          verified_at: string | null
         }
         Insert: {
           created_at?: string
@@ -350,6 +352,8 @@ export type Database = {
           name: string
           organization_type?: Database["public"]["Enums"]["org_type"]
           registration_number?: string | null
+          status?: string
+          verified_at?: string | null
         }
         Update: {
           created_at?: string
@@ -358,6 +362,8 @@ export type Database = {
           name?: string
           organization_type?: Database["public"]["Enums"]["org_type"]
           registration_number?: string | null
+          status?: string
+          verified_at?: string | null
         }
         Relationships: []
       }
@@ -577,6 +583,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_status: string
           created_at: string
           designation: string | null
           email: string | null
@@ -588,6 +595,7 @@ export type Database = {
           portal_type: Database["public"]["Enums"]["portal_type"]
         }
         Insert: {
+          account_status?: string
           created_at?: string
           designation?: string | null
           email?: string | null
@@ -599,6 +607,7 @@ export type Database = {
           portal_type?: Database["public"]["Enums"]["portal_type"]
         }
         Update: {
+          account_status?: string
           created_at?: string
           designation?: string | null
           email?: string | null
@@ -745,6 +754,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_platform_stats: { Args: never; Returns: Json }
       can_access_inspection: {
         Args: { _inspection_id: string; _user_id: string }
         Returns: boolean
@@ -761,6 +771,7 @@ export type Database = {
         Returns: boolean
       }
       is_gov: { Args: { _user_id: string }; Returns: boolean }
+      is_main_admin: { Args: { _user_id: string }; Returns: boolean }
       is_org_admin_of: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
