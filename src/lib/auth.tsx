@@ -3,7 +3,13 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
 export type PortalType = "government" | "private" | "admin";
-export type AppRole = "super_admin" | "gov_admin" | "inspector" | "org_admin" | "org_user";
+export type AppRole =
+  | "main_admin"
+  | "super_admin"
+  | "gov_admin"
+  | "inspector"
+  | "org_admin"
+  | "org_user";
 
 export type AuthProfile = {
   id: string;
@@ -75,7 +81,8 @@ export function useAuth() {
     roles,
     loading,
     isGovernment,
-    isAdmin: roles.some((r) => r === "gov_admin" || r === "super_admin" || r === "org_admin"),
+    isMainAdmin: roles.includes("main_admin"),
+    isAdmin: roles.some((r) => r === "gov_admin" || r === "super_admin" || r === "org_admin" || r === "main_admin"),
     signOut: () => supabase.auth.signOut(),
   };
 }
