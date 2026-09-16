@@ -14,7 +14,9 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminBusinessRouteImport } from './routes/admin/business'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminGovernmentRouteImport } from './routes/admin/government'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminOverviewRouteImport } from './routes/admin/overview'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
@@ -53,9 +55,19 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBusinessRoute = AdminBusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGovernmentRoute = AdminGovernmentRouteImport.update({
+  id: '/government',
+  path: '/government',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -125,7 +137,9 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/business': typeof AdminBusinessRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/government': typeof AdminGovernmentRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/overview': typeof AdminOverviewRoute
   '/admin/users': typeof AdminUsersRoute
@@ -144,7 +158,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/business': typeof AdminBusinessRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/government': typeof AdminGovernmentRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/overview': typeof AdminOverviewRoute
   '/admin/users': typeof AdminUsersRoute
@@ -165,7 +181,9 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
+  '/admin/business': typeof AdminBusinessRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/government': typeof AdminGovernmentRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/overview': typeof AdminOverviewRoute
   '/admin/users': typeof AdminUsersRoute
@@ -187,7 +205,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/reset-password'
+    | '/admin/business'
     | '/admin/dashboard'
+    | '/admin/government'
     | '/admin/login'
     | '/admin/overview'
     | '/admin/users'
@@ -206,7 +226,9 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/reset-password'
+    | '/admin/business'
     | '/admin/dashboard'
+    | '/admin/government'
     | '/admin/login'
     | '/admin/overview'
     | '/admin/users'
@@ -226,7 +248,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/app'
     | '/reset-password'
+    | '/admin/business'
     | '/admin/dashboard'
+    | '/admin/government'
     | '/admin/login'
     | '/admin/overview'
     | '/admin/users'
@@ -288,11 +312,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/business': {
+      id: '/admin/business'
+      path: '/business'
+      fullPath: '/admin/business'
+      preLoaderRoute: typeof AdminBusinessRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/government': {
+      id: '/admin/government'
+      path: '/government'
+      fullPath: '/admin/government'
+      preLoaderRoute: typeof AdminGovernmentRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/login': {
@@ -383,7 +421,9 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBusinessRoute: typeof AdminBusinessRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminGovernmentRoute: typeof AdminGovernmentRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminOverviewRoute: typeof AdminOverviewRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -391,7 +431,9 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBusinessRoute: AdminBusinessRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminGovernmentRoute: AdminGovernmentRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminOverviewRoute: AdminOverviewRoute,
   AdminUsersRoute: AdminUsersRoute,
