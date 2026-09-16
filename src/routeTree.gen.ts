@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppRulesRouteImport } from './routes/app/rules'
 import { Route as AppScanRouteImport } from './routes/app/scan'
@@ -38,9 +40,19 @@ const AppRoute = AppRouteImport.update({
   path: '/app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
@@ -94,6 +106,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin/login': typeof AdminLoginRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
@@ -108,6 +122,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin/login': typeof AdminLoginRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
@@ -124,6 +140,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin/login': typeof AdminLoginRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
@@ -141,6 +159,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/reset-password'
+    | '/admin/login'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
@@ -155,6 +175,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/reset-password'
+    | '/admin/login'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
@@ -170,6 +192,8 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/reset-password'
+    | '/admin/login'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
@@ -186,6 +210,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
+  ResetPasswordRoute: typeof ResetPasswordRoute
   AuthCompanyRoute: typeof AuthCompanyRoute
   AuthGovernmentRoute: typeof AuthGovernmentRoute
 }
@@ -213,11 +238,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
     '/app/dashboard': {
@@ -287,10 +326,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminLoginRoute: typeof AdminLoginRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminLoginRoute: AdminLoginRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
@@ -322,6 +363,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
+  ResetPasswordRoute: ResetPasswordRoute,
   AuthCompanyRoute: AuthCompanyRoute,
   AuthGovernmentRoute: AuthGovernmentRoute,
 }
