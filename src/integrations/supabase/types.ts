@@ -775,6 +775,7 @@ export type Database = {
         | "inspector"
         | "org_admin"
         | "org_user"
+        | "main_admin"
       compliance_status:
         | "compliant"
         | "needs_review"
@@ -921,6 +922,7 @@ export const Constants = {
         "inspector",
         "org_admin",
         "org_user",
+        "main_admin",
       ],
       compliance_status: [
         "compliant",
