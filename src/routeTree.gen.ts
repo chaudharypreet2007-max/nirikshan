@@ -10,7 +10,19 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminBusinessRouteImport } from './routes/admin/business'
+import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
+import { Route as AdminGovernmentRouteImport } from './routes/admin/government'
+import { Route as AdminInspectionsRouteImport } from './routes/admin/inspections'
+import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminOverviewRouteImport } from './routes/admin/overview'
+import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminRulesRouteImport } from './routes/admin/rules'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppRulesRouteImport } from './routes/app/rules'
 import { Route as AppScanRouteImport } from './routes/app/scan'
@@ -26,10 +38,70 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBusinessRoute = AdminBusinessRouteImport.update({
+  id: '/business',
+  path: '/business',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminDashboardRoute = AdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGovernmentRoute = AdminGovernmentRouteImport.update({
+  id: '/government',
+  path: '/government',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminInspectionsRoute = AdminInspectionsRouteImport.update({
+  id: '/inspections',
+  path: '/inspections',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOverviewRoute = AdminOverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRulesRoute = AdminRulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
@@ -80,12 +152,24 @@ const AppReviewsReviewIdRoute = AppReviewsReviewIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin/business': typeof AdminBusinessRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/government': typeof AdminGovernmentRoute
+  '/admin/inspections': typeof AdminInspectionsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/overview': typeof AdminOverviewRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/rules': typeof AdminRulesRoute
+  '/admin/users': typeof AdminUsersRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
@@ -94,11 +178,22 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin/business': typeof AdminBusinessRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/government': typeof AdminGovernmentRoute
+  '/admin/inspections': typeof AdminInspectionsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/overview': typeof AdminOverviewRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/rules': typeof AdminRulesRoute
+  '/admin/users': typeof AdminUsersRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
+  '/admin': typeof AdminIndexRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections': typeof AppInspectionsIndexRoute
@@ -107,12 +202,24 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRouteWithChildren
+  '/reset-password': typeof ResetPasswordRoute
+  '/admin/business': typeof AdminBusinessRoute
+  '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/government': typeof AdminGovernmentRoute
+  '/admin/inspections': typeof AdminInspectionsRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/overview': typeof AdminOverviewRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/rules': typeof AdminRulesRoute
+  '/admin/users': typeof AdminUsersRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
   '/app/scan': typeof AppScanRoute
   '/auth/company': typeof AuthCompanyRoute
   '/auth/government': typeof AuthGovernmentRoute
+  '/admin/': typeof AdminIndexRoute
   '/app/inspections/$inspectionId': typeof AppInspectionsInspectionIdRoute
   '/app/reviews/$reviewId': typeof AppReviewsReviewIdRoute
   '/app/inspections/': typeof AppInspectionsIndexRoute
@@ -122,12 +229,24 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/app'
+    | '/reset-password'
+    | '/admin/business'
+    | '/admin/dashboard'
+    | '/admin/government'
+    | '/admin/inspections'
+    | '/admin/login'
+    | '/admin/overview'
+    | '/admin/products'
+    | '/admin/rules'
+    | '/admin/users'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
+    | '/admin/'
     | '/app/inspections/$inspectionId'
     | '/app/reviews/$reviewId'
     | '/app/inspections/'
@@ -136,11 +255,22 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/reset-password'
+    | '/admin/business'
+    | '/admin/dashboard'
+    | '/admin/government'
+    | '/admin/inspections'
+    | '/admin/login'
+    | '/admin/overview'
+    | '/admin/products'
+    | '/admin/rules'
+    | '/admin/users'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
+    | '/admin'
     | '/app/inspections/$inspectionId'
     | '/app/reviews/$reviewId'
     | '/app/inspections'
@@ -148,12 +278,24 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/app'
+    | '/reset-password'
+    | '/admin/business'
+    | '/admin/dashboard'
+    | '/admin/government'
+    | '/admin/inspections'
+    | '/admin/login'
+    | '/admin/overview'
+    | '/admin/products'
+    | '/admin/rules'
+    | '/admin/users'
     | '/app/dashboard'
     | '/app/rules'
     | '/app/scan'
     | '/auth/company'
     | '/auth/government'
+    | '/admin/'
     | '/app/inspections/$inspectionId'
     | '/app/reviews/$reviewId'
     | '/app/inspections/'
@@ -162,7 +304,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRouteWithChildren
+  ResetPasswordRoute: typeof ResetPasswordRoute
   AuthCompanyRoute: typeof AuthCompanyRoute
   AuthGovernmentRoute: typeof AuthGovernmentRoute
 }
@@ -176,12 +320,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/app': {
       id: '/app'
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/business': {
+      id: '/admin/business'
+      path: '/business'
+      fullPath: '/admin/business'
+      preLoaderRoute: typeof AdminBusinessRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/dashboard': {
+      id: '/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/government': {
+      id: '/admin/government'
+      path: '/government'
+      fullPath: '/admin/government'
+      preLoaderRoute: typeof AdminGovernmentRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/inspections': {
+      id: '/admin/inspections'
+      path: '/inspections'
+      fullPath: '/admin/inspections'
+      preLoaderRoute: typeof AdminInspectionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/overview': {
+      id: '/admin/overview'
+      path: '/overview'
+      fullPath: '/admin/overview'
+      preLoaderRoute: typeof AdminOverviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rules': {
+      id: '/admin/rules'
+      path: '/rules'
+      fullPath: '/admin/rules'
+      preLoaderRoute: typeof AdminRulesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/app/dashboard': {
       id: '/app/dashboard'
@@ -249,6 +477,34 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminBusinessRoute: typeof AdminBusinessRoute
+  AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminGovernmentRoute: typeof AdminGovernmentRoute
+  AdminInspectionsRoute: typeof AdminInspectionsRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminOverviewRoute: typeof AdminOverviewRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminRulesRoute: typeof AdminRulesRoute
+  AdminUsersRoute: typeof AdminUsersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminBusinessRoute: AdminBusinessRoute,
+  AdminDashboardRoute: AdminDashboardRoute,
+  AdminGovernmentRoute: AdminGovernmentRoute,
+  AdminInspectionsRoute: AdminInspectionsRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminOverviewRoute: AdminOverviewRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminRulesRoute: AdminRulesRoute,
+  AdminUsersRoute: AdminUsersRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppRulesRoute: typeof AppRulesRoute
@@ -273,7 +529,9 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRouteWithChildren,
+  ResetPasswordRoute: ResetPasswordRoute,
   AuthCompanyRoute: AuthCompanyRoute,
   AuthGovernmentRoute: AuthGovernmentRoute,
 }
