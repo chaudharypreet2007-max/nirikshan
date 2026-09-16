@@ -17,8 +17,11 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AdminBusinessRouteImport } from './routes/admin/business'
 import { Route as AdminDashboardRouteImport } from './routes/admin/dashboard'
 import { Route as AdminGovernmentRouteImport } from './routes/admin/government'
+import { Route as AdminInspectionsRouteImport } from './routes/admin/inspections'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminOverviewRouteImport } from './routes/admin/overview'
+import { Route as AdminProductsRouteImport } from './routes/admin/products'
+import { Route as AdminRulesRouteImport } from './routes/admin/rules'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AppDashboardRouteImport } from './routes/app/dashboard'
 import { Route as AppRulesRouteImport } from './routes/app/rules'
@@ -70,6 +73,11 @@ const AdminGovernmentRoute = AdminGovernmentRouteImport.update({
   path: '/government',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminInspectionsRoute = AdminInspectionsRouteImport.update({
+  id: '/inspections',
+  path: '/inspections',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -78,6 +86,16 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
 const AdminOverviewRoute = AdminOverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminProductsRoute = AdminProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRulesRoute = AdminRulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -140,8 +158,11 @@ export interface FileRoutesByFullPath {
   '/admin/business': typeof AdminBusinessRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/government': typeof AdminGovernmentRoute
+  '/admin/inspections': typeof AdminInspectionsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/rules': typeof AdminRulesRoute
   '/admin/users': typeof AdminUsersRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
@@ -161,8 +182,11 @@ export interface FileRoutesByTo {
   '/admin/business': typeof AdminBusinessRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/government': typeof AdminGovernmentRoute
+  '/admin/inspections': typeof AdminInspectionsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/rules': typeof AdminRulesRoute
   '/admin/users': typeof AdminUsersRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
@@ -184,8 +208,11 @@ export interface FileRoutesById {
   '/admin/business': typeof AdminBusinessRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/government': typeof AdminGovernmentRoute
+  '/admin/inspections': typeof AdminInspectionsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/overview': typeof AdminOverviewRoute
+  '/admin/products': typeof AdminProductsRoute
+  '/admin/rules': typeof AdminRulesRoute
   '/admin/users': typeof AdminUsersRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/rules': typeof AppRulesRoute
@@ -208,8 +235,11 @@ export interface FileRouteTypes {
     | '/admin/business'
     | '/admin/dashboard'
     | '/admin/government'
+    | '/admin/inspections'
     | '/admin/login'
     | '/admin/overview'
+    | '/admin/products'
+    | '/admin/rules'
     | '/admin/users'
     | '/app/dashboard'
     | '/app/rules'
@@ -229,8 +259,11 @@ export interface FileRouteTypes {
     | '/admin/business'
     | '/admin/dashboard'
     | '/admin/government'
+    | '/admin/inspections'
     | '/admin/login'
     | '/admin/overview'
+    | '/admin/products'
+    | '/admin/rules'
     | '/admin/users'
     | '/app/dashboard'
     | '/app/rules'
@@ -251,8 +284,11 @@ export interface FileRouteTypes {
     | '/admin/business'
     | '/admin/dashboard'
     | '/admin/government'
+    | '/admin/inspections'
     | '/admin/login'
     | '/admin/overview'
+    | '/admin/products'
+    | '/admin/rules'
     | '/admin/users'
     | '/app/dashboard'
     | '/app/rules'
@@ -333,6 +369,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGovernmentRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/inspections': {
+      id: '/admin/inspections'
+      path: '/inspections'
+      fullPath: '/admin/inspections'
+      preLoaderRoute: typeof AdminInspectionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -345,6 +388,20 @@ declare module '@tanstack/react-router' {
       path: '/overview'
       fullPath: '/admin/overview'
       preLoaderRoute: typeof AdminOverviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/products': {
+      id: '/admin/products'
+      path: '/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AdminProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rules': {
+      id: '/admin/rules'
+      path: '/rules'
+      fullPath: '/admin/rules'
+      preLoaderRoute: typeof AdminRulesRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/users': {
@@ -424,8 +481,11 @@ interface AdminRouteChildren {
   AdminBusinessRoute: typeof AdminBusinessRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminGovernmentRoute: typeof AdminGovernmentRoute
+  AdminInspectionsRoute: typeof AdminInspectionsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminOverviewRoute: typeof AdminOverviewRoute
+  AdminProductsRoute: typeof AdminProductsRoute
+  AdminRulesRoute: typeof AdminRulesRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -434,8 +494,11 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBusinessRoute: AdminBusinessRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminGovernmentRoute: AdminGovernmentRoute,
+  AdminInspectionsRoute: AdminInspectionsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminOverviewRoute: AdminOverviewRoute,
+  AdminProductsRoute: AdminProductsRoute,
+  AdminRulesRoute: AdminRulesRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
