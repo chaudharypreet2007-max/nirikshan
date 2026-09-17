@@ -75,6 +75,13 @@ function Landing() {
               variant="enterprise"
             />
           </div>
+
+          <p className="mt-6 text-sm text-muted-foreground">
+            Platform administrator?{" "}
+            <Link to="/admin/login" className="font-semibold text-primary underline-offset-4 hover:underline">
+              Main Administration Portal
+            </Link>
+          </p>
         </section>
 
         <section className="border-y border-border bg-card">
