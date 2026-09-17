@@ -70,7 +70,7 @@ function UsersPage() {
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin-users"] });
 
   const create = useMutation({
-    mutationFn: (input: Parameters<typeof createUser>[0]["data"]) => createUser({ data: input }),
+    mutationFn: (input: Record<string, unknown>) => createUser({ data: input } as never),
     onSuccess: () => {
       toast.success("Account created");
       setCreateOpen(false);
@@ -80,7 +80,7 @@ function UsersPage() {
   });
 
   const update = useMutation({
-    mutationFn: (input: Parameters<typeof updateUser>[0]["data"]) => updateUser({ data: input }),
+    mutationFn: (input: Record<string, unknown>) => updateUser({ data: input } as never),
     onSuccess: () => {
       toast.success("Account updated");
       setEditing(null);
