@@ -32,7 +32,7 @@ export function OrganisationManager({ scope }: { scope: Scope }) {
   });
 
   const save = useMutation({
-    mutationFn: (input: Parameters<typeof upsert>[0]["data"]) => upsert({ data: input }),
+    mutationFn: (input: Record<string, unknown>) => upsert({ data: input } as never),
     onSuccess: () => {
       toast.success("Organisation saved");
       setOpen(false);
@@ -290,7 +290,7 @@ export function PortalPeople({ portal }: { portal: "government" | "private" }) {
   });
 
   const update = useMutation({
-    mutationFn: (input: Parameters<typeof updateUser>[0]["data"]) => updateUser({ data: input }),
+    mutationFn: (input: Record<string, unknown>) => updateUser({ data: input } as never),
     onSuccess: () => {
       toast.success("Account updated");
       qc.invalidateQueries({ queryKey: ["admin-users"] });
