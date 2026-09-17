@@ -167,7 +167,7 @@ export const adminUpdateUser = createServerFn({ method: "POST" })
     if (data.portalType !== undefined) patch["portal_type"] = data.portalType;
 
     if (Object.keys(patch).length) {
-      const { error } = await db.from("profiles").update(patch).eq("id", data.userId);
+      const { error } = await db.from("profiles").update(patch as never).eq("id", data.userId);
       if (error) throw new Error(error.message);
     }
 
@@ -345,7 +345,7 @@ export const adminListInspections = createServerFn({ method: "POST" })
       .limit(500);
     if (data.from) query = query.gte("inspection_date", data.from);
     if (data.to) query = query.lte("inspection_date", data.to);
-    if (data.status && data.status !== "all") query = query.eq("status", data.status);
+    if (data.status && data.status !== "all") query = query.eq("status", data.status as never);
 
     const [{ data: rows, error }, { data: profiles }, { data: orgs }, { data: products }, { data: violations }] =
       await Promise.all([

@@ -22,8 +22,8 @@ function AdminDashboard() {
   const stats = useServerFn(adminStats);
   const audit = useServerFn(adminListAudit);
 
-  const { data, isLoading } = useQuery({ queryKey: ["admin-stats"], queryFn: () => stats({ data: {} as never }) });
-  const { data: logs } = useQuery({ queryKey: ["admin-audit"], queryFn: () => audit({ data: {} as never }) });
+  const { data, isLoading } = useQuery({ queryKey: ["admin-stats"], queryFn: () => stats() });
+  const { data: logs } = useQuery({ queryKey: ["admin-audit"], queryFn: () => audit() });
 
   const s = data ?? {};
 

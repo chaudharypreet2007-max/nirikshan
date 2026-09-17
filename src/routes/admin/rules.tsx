@@ -51,7 +51,7 @@ function RulesPage() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Rule | null>(null);
 
-  const { data, isLoading } = useQuery({ queryKey: ["admin-rules"], queryFn: () => list({ data: {} as never }) });
+  const { data, isLoading } = useQuery({ queryKey: ["admin-rules"], queryFn: () => list() });
 
   const save = useMutation({
     mutationFn: (input: Parameters<typeof upsert>[0]["data"]) => upsert({ data: input }),

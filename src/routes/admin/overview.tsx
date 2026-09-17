@@ -27,7 +27,7 @@ function Overview() {
   const stats = useServerFn(adminStats);
   const listOrgs = useServerFn(adminListOrganizations);
 
-  const { data } = useQuery({ queryKey: ["admin-stats"], queryFn: () => stats({ data: {} as never }) });
+  const { data } = useQuery({ queryKey: ["admin-stats"], queryFn: () => stats() });
   const { data: orgs } = useQuery({
     queryKey: ["admin-orgs", scope],
     queryFn: () => listOrgs({ data: { scope } }),
