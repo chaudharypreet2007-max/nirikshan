@@ -188,11 +188,10 @@ function AdminLogin() {
               onClick={async () => {
                 const w = window as unknown as { __TSR_ROUTER__?: unknown };
                 console.log("ADMIN_DEBUG same router instance:", router === w.__TSR_ROUTER__);
-                console.log("ADMIN_DEBUG router state:", router.state.location.href, router.state.status);
-                history.pushState({}, "", "/auth/government");
-                window.dispatchEvent(new PopStateEvent("popstate"));
-                await new Promise((r) => setTimeout(r, 800));
-                console.log("ADMIN_DEBUG after popstate:", location.pathname, router.state.location.href);
+                console.log("ADMIN_DEBUG state href:", router.state.location.href, "| status:", router.state.status);
+                console.log("ADMIN_DEBUG latestLocation.href:", router.latestLocation.href);
+                const built = router.buildLocation({ to: "/auth/government" });
+                console.log("ADMIN_DEBUG built to /auth/government:", built.href, "| state:", JSON.stringify(built.state).slice(0, 200));
               }}
             >
               debug-nav
