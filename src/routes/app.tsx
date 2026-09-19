@@ -36,8 +36,10 @@ function AppLayout() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && !session) navigate({ to: "/" });
-  }, [loading, session, navigate]);
+    // Only guard while inside the portal section — mid-transition redirects would
+    // cancel the user's own navigation away from these pages.
+    if (!loading && !session && pathname.startsWith("/app")) navigate({ to: "/" });
+  }, [loading, session, navigate, pathname]);
 
   useEffect(() => {
     setOpen(false);
