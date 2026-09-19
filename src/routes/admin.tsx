@@ -42,9 +42,12 @@ function AdminLayout() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (isLogin || loading) return;
+    // Only guard while the user is actually inside the admin section. During a
+    // transition away (e.g. clicking a link home) the location updates before the
+    // layout unmounts, and redirecting then would cancel the user's navigation.
+    if (isLogin || loading || !pathname.startsWith("/admin")) return;
     if (!session || !isMainAdmin) navigate({ to: "/admin/login", replace: true });
-  }, [isLogin, loading, session, isMainAdmin, navigate]);
+  }, [isLogin, loading, session, isMainAdmin, navigate, pathname]);
 
   useEffect(() => {
     setOpen(false);
