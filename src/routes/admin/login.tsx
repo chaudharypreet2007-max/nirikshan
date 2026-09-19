@@ -29,7 +29,6 @@ export const Route = createFileRoute("/admin/login")({
 
 function AdminLogin() {
   const navigate = useNavigate();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -174,46 +173,10 @@ function AdminLogin() {
 
           <p className="mt-5 text-xs text-muted-foreground">
             Inspectors and business users sign in on their own portals from the{" "}
-            <Link
-              to="/"
-              onClick={(e) => console.log("ADMIN_DEBUG link click, defaultPrevented:", e.defaultPrevented)}
-              className="font-semibold text-primary underline-offset-4 hover:underline"
-            >
+            <Link to="/" className="font-semibold text-primary underline-offset-4 hover:underline">
               home page
             </Link>
-            .{" "}
-            <button
-              type="button"
-              className="rounded border px-2 text-xs"
-              onClick={() => {
-                const w = window as unknown as { __TSR_ROUTER__?: unknown };
-                const r = router as unknown as Record<string, unknown>;
-                const navOrig = router.navigate.bind(router);
-                const commitOrig = (r.commitLocation as (...a: unknown[]) => unknown).bind(router);
-                router.navigate = (opts: never) => {
-                  console.log("ADMIN_DEBUG navigate called:", JSON.stringify(opts));
-                  const p = navOrig(opts);
-                  Promise.resolve(p).then(
-                    () => console.log("ADMIN_DEBUG navigate resolved"),
-                    (err: unknown) => console.log("ADMIN_DEBUG navigate REJECTED:", String(err)),
-                  );
-                  return p;
-                };
-                r.commitLocation = (next: never) => {
-                  console.log("ADMIN_DEBUG commitLocation href:", JSON.stringify((next as { href?: string })?.href));
-                  const p = commitOrig(next);
-                  Promise.resolve(p).then(
-                    () => console.log("ADMIN_DEBUG commitLocation resolved"),
-                    (err: unknown) => console.log("ADMIN_DEBUG commitLocation REJECTED:", String(err)),
-                  );
-                  return p;
-                };
-                void w;
-                console.log("ADMIN_DEBUG instrumented");
-              }}
-            >
-              debug-nav
-            </button>
+            .
           </p>
         </section>
       </main>
