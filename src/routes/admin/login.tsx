@@ -185,14 +185,31 @@ function AdminLogin() {
             <button
               type="button"
               className="rounded border px-2 text-xs"
-              onClick={async () => {
+              onClick={() => {
                 const w = window as unknown as { __TSR_ROUTER__?: unknown };
-                console.log("ADMIN_DEBUG same router instance:", router === w.__TSR_ROUTER__);
-                console.log("ADMIN_DEBUG state href:", router.state.location.href, "| status:", router.state.status);
-                console.log("ADMIN_DEBUG history ctor:", router.history?.constructor?.name, "| history.location:", JSON.stringify(router.history?.location));
-                console.log("ADMIN_DEBUG latestLocation.href:", router.latestLocation.href);
-                const built = router.buildLocation({ to: "/auth/government" });
-                console.log("ADMIN_DEBUG built to /auth/government:", built.href, "| state:", JSON.stringify(built.state).slice(0, 200));
+                const r = router as unknown as Record<string, unknown>;
+                const navOrig = router.navigate.bind(router);
+                const commitOrig = (r.commitLocation as (...a: unknown[]) => unknown).bind(router);
+                router.navigate = (opts: never) => {
+                  console.log("ADMIN_DEBUG navigate called:", JSON.stringify(opts));
+                  const p = navOrig(opts);
+                  Promise.resolve(p).then(
+                    () => console.log("ADMIN_DEBUG navigate resolved"),
+                    (err: unknown) => console.log("ADMIN_DEBUG navigate REJECTED:", String(err)),
+                  );
+                  return p;
+                };
+                r.commitLocation = (next: never) => {
+                  console.log("ADMIN_DEBUG commitLocation href:", JSON.stringify((next as { href?: string })?.href));
+                  const p = commitOrig(next);
+                  Promise.resolve(p).then(
+                    () => console.log("ADMIN_DEBUG commitLocation resolved"),
+                    (err: unknown) => console.log("ADMIN_DEBUG commitLocation REJECTED:", String(err)),
+                  );
+                  return p;
+                };
+                void w;
+                console.log("ADMIN_DEBUG instrumented");
               }}
             >
               debug-nav
