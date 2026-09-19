@@ -174,10 +174,29 @@ function AdminLogin() {
 
           <p className="mt-5 text-xs text-muted-foreground">
             Inspectors and business users sign in on their own portals from the{" "}
-            <Link to="/" className="font-semibold text-primary underline-offset-4 hover:underline">
+            <Link
+              to="/"
+              onClick={(e) => console.log("ADMIN_DEBUG link click, defaultPrevented:", e.defaultPrevented)}
+              className="font-semibold text-primary underline-offset-4 hover:underline"
+            >
               home page
             </Link>
-            .
+            .{" "}
+            <button
+              type="button"
+              className="rounded border px-2 text-xs"
+              onClick={async () => {
+                console.log("ADMIN_DEBUG manual nav start");
+                try {
+                  await router.navigate({ to: "/auth/government" });
+                  console.log("ADMIN_DEBUG manual nav done, now at", router.state.location.pathname);
+                } catch (err) {
+                  console.log("ADMIN_DEBUG manual nav error", err);
+                }
+              }}
+            >
+              debug-nav
+            </button>
           </p>
         </section>
       </main>
