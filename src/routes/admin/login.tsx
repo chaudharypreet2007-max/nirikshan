@@ -186,13 +186,13 @@ function AdminLogin() {
               type="button"
               className="rounded border px-2 text-xs"
               onClick={async () => {
-                console.log("ADMIN_DEBUG manual nav start");
-                try {
-                  await router.navigate({ to: "/auth/government" });
-                  console.log("ADMIN_DEBUG manual nav done, now at", router.state.location.pathname);
-                } catch (err) {
-                  console.log("ADMIN_DEBUG manual nav error", err);
-                }
+                const w = window as unknown as { __TSR_ROUTER__?: unknown };
+                console.log("ADMIN_DEBUG same router instance:", router === w.__TSR_ROUTER__);
+                console.log("ADMIN_DEBUG router state:", router.state.location.href, router.state.status);
+                history.pushState({}, "", "/auth/government");
+                window.dispatchEvent(new PopStateEvent("popstate"));
+                await new Promise((r) => setTimeout(r, 800));
+                console.log("ADMIN_DEBUG after popstate:", location.pathname, router.state.location.href);
               }}
             >
               debug-nav
