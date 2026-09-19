@@ -189,6 +189,7 @@ function AdminLogin() {
                 const w = window as unknown as { __TSR_ROUTER__?: unknown };
                 console.log("ADMIN_DEBUG same router instance:", router === w.__TSR_ROUTER__);
                 console.log("ADMIN_DEBUG state href:", router.state.location.href, "| status:", router.state.status);
+                console.log("ADMIN_DEBUG history ctor:", router.history?.constructor?.name, "| history.location:", JSON.stringify(router.history?.location));
                 console.log("ADMIN_DEBUG latestLocation.href:", router.latestLocation.href);
                 const built = router.buildLocation({ to: "/auth/government" });
                 console.log("ADMIN_DEBUG built to /auth/government:", built.href, "| state:", JSON.stringify(built.state).slice(0, 200));
