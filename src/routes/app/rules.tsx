@@ -12,10 +12,14 @@ export const Route = createFileRoute("/app/rules")({
       { title: "Rule engine — Nirikshan AI" },
       {
         name: "description",
-        content: "Configurable Legal Metrology rules used to evaluate packaged commodity declarations.",
+        content:
+          "Configurable Legal Metrology rules used to evaluate packaged commodity declarations.",
       },
       { property: "og:title", content: "Rule engine — Nirikshan AI" },
-      { property: "og:description", content: "View and toggle the compliance rules applied to every scan." },
+      {
+        property: "og:description",
+        content: "View and toggle the compliance rules applied to every scan.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -89,7 +93,9 @@ function Rules() {
                     <SeverityChip severity={rule.severity} />
                   </div>
                   <p className="mt-2 font-medium">{rule.rule_name}</p>
-                  {rule.description ? <p className="mt-1 text-sm text-muted-foreground">{rule.description}</p> : null}
+                  {rule.description ? (
+                    <p className="mt-1 text-sm text-muted-foreground">{rule.description}</p>
+                  ) : null}
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground">
@@ -99,7 +105,9 @@ function Rules() {
                     checked={rule.status === "active"}
                     disabled={!canEdit || toggle.isPending}
                     aria-label={`Toggle ${rule.rule_code}`}
-                    onCheckedChange={(v) => toggle.mutate({ id: rule.id, status: v ? "active" : "inactive" })}
+                    onCheckedChange={(v) =>
+                      toggle.mutate({ id: rule.id, status: v ? "active" : "inactive" })
+                    }
                   />
                 </div>
               </li>

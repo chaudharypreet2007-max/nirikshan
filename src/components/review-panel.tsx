@@ -74,7 +74,9 @@ export function ReviewPanel({
     },
   });
 
-  const openRequest = (requests ?? []).find((r) => r.status === "open" && r.assigned_to === profile?.id);
+  const openRequest = (requests ?? []).find(
+    (r) => r.status === "open" && r.assigned_to === profile?.id,
+  );
   const activeReview = (reviews ?? [])[0];
 
   const submitReview = async () => {
@@ -115,7 +117,11 @@ export function ReviewPanel({
         paths.push(path);
       }
 
-      const { data: current } = await supabase.from("inspections").select("ai_raw").eq("id", inspectionId).maybeSingle();
+      const { data: current } = await supabase
+        .from("inspections")
+        .select("ai_raw")
+        .eq("id", inspectionId)
+        .maybeSingle();
       const raw = (current?.ai_raw ?? {}) as Record<string, unknown>;
       const { error: upErr } = await supabase
         .from("inspections")
@@ -170,14 +176,25 @@ export function ReviewPanel({
       {openRequest ? (
         <div className="rounded-lg border border-review/40 bg-review-soft px-4 py-3 text-sm">
           <p className="font-semibold text-review">Your supervisor requested additional evidence</p>
-          {openRequest.request_description ? <p className="mt-1">{openRequest.request_description}</p> : null}
+          {openRequest.request_description ? (
+            <p className="mt-1">{openRequest.request_description}</p>
+          ) : null}
           <ul className="mt-2 list-disc pl-5 text-xs">
             {((openRequest.requested_items ?? []) as string[]).map((i) => (
               <li key={i}>{i}</li>
             ))}
           </ul>
-          <Button className="mt-3 h-10" disabled={uploading} onClick={() => fileRef.current?.click()}>
-            {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />} Upload requested images
+          <Button
+            className="mt-3 h-10"
+            disabled={uploading}
+            onClick={() => fileRef.current?.click()}
+          >
+            {uploading ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Upload className="size-4" />
+            )}{" "}
+            Upload requested images
           </Button>
           <input
             ref={fileRef}
@@ -193,14 +210,20 @@ export function ReviewPanel({
         </div>
       ) : null}
 
-      {isOwner && (!activeReview || ["approved", "rejected", "closed"].includes(activeReview.status)) ? (
+      {isOwner &&
+      (!activeReview || ["approved", "rejected", "closed"].includes(activeReview.status)) ? (
         <div className="space-y-3">
           <p className="text-sm text-muted-foreground">
-            Request help from a senior officer. Only this inspection is shared — never your dashboard or history.
+            Request help from a senior officer. Only this inspection is shared — never your
+            dashboard or history.
           </p>
           <div className="space-y-1.5">
             <Label>Reason</Label>
-            <RadioGroup value={reason} onValueChange={setReason} className="grid gap-2 sm:grid-cols-2">
+            <RadioGroup
+              value={reason}
+              onValueChange={setReason}
+              className="grid gap-2 sm:grid-cols-2"
+            >
               {REASONS.map((r) => (
                 <label key={r} className="flex items-center gap-2 text-sm">
                   <RadioGroupItem value={r} id={`reason-${r}`} />
@@ -211,7 +234,12 @@ export function ReviewPanel({
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="review-notes">Additional notes</Label>
-            <Textarea id="review-notes" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
+            <Textarea
+              id="review-notes"
+              rows={3}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
           </div>
           <Button className="h-11 w-full" disabled={busy} onClick={submitReview}>
             {busy ? <Loader2 className="size-4 animate-spin" /> : null} Request supervisor review

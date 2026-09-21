@@ -41,7 +41,11 @@ const PAGE_W = 210;
 const CONTENT_W = PAGE_W - MARGIN * 2;
 
 function statusLabel(status: string) {
-  return status === "compliant" ? "Compliant" : status === "needs_review" ? "Needs review" : "Non-compliant";
+  return status === "compliant"
+    ? "Compliant"
+    : status === "needs_review"
+      ? "Needs review"
+      : "Non-compliant";
 }
 
 export function buildInspectionPdf(data: ReportData): jsPDF {
@@ -67,7 +71,10 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
     y += 6;
   };
 
-  const para = (text: string, opts?: { size?: number; bold?: boolean; color?: [number, number, number]; indent?: number }) => {
+  const para = (
+    text: string,
+    opts?: { size?: number; bold?: boolean; color?: [number, number, number]; indent?: number },
+  ) => {
     const size = opts?.size ?? 9;
     doc.setFont("helvetica", opts?.bold ? "bold" : "normal");
     doc.setFontSize(size);
@@ -87,7 +94,11 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
   doc.text("Nirikshan AI — Label Compliance Report", MARGIN, 12);
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
-  doc.text("Legal Metrology (Packaged Commodities) Rules, 2011 · Decision-support assessment", MARGIN, 19);
+  doc.text(
+    "Legal Metrology (Packaged Commodities) Rules, 2011 · Decision-support assessment",
+    MARGIN,
+    19,
+  );
   y = 34;
 
   // Verdict summary
@@ -97,7 +108,11 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
   doc.text(`${data.score}/100`, MARGIN, y + 6);
   doc.setFontSize(11);
   const statusColor: [number, number, number] =
-    data.status === "compliant" ? [22, 122, 66] : data.status === "needs_review" ? [161, 98, 7] : [185, 28, 28];
+    data.status === "compliant"
+      ? [22, 122, 66]
+      : data.status === "needs_review"
+        ? [161, 98, 7]
+        : [185, 28, 28];
   doc.setTextColor(...statusColor);
   doc.text(statusLabel(data.status), MARGIN + 34, y + 6);
   y += 14;
@@ -114,7 +129,9 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
   );
   para(`Inspection date: ${data.inspectionDate}`);
   para(`Location: ${data.location}`);
-  para(`Inspection type: ${data.inspectionType === "government_enforcement" ? "Government enforcement" : "Private pre-compliance"}`);
+  para(
+    `Inspection type: ${data.inspectionType === "government_enforcement" ? "Government enforcement" : "Private pre-compliance"}`,
+  );
   para(`Inspector: ${data.inspectorName}`);
   if (data.matchScore != null) para(`Product identity match: ${data.matchScore}%`);
   y += 3;
@@ -136,14 +153,25 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
     doc.text(`${label}`, MARGIN, y);
     doc.setFont("helvetica", "normal");
     const statusColor: [number, number, number] =
-      d.validation_status === "present" ? [22, 122, 66] : d.validation_status === "missing" ? [185, 28, 28] : [161, 98, 7];
+      d.validation_status === "present"
+        ? [22, 122, 66]
+        : d.validation_status === "missing"
+          ? [185, 28, 28]
+          : [161, 98, 7];
     doc.setTextColor(...statusColor);
     doc.text(status, PAGE_W - MARGIN, y, { align: "right" });
     y += 5;
-    const value = d.normalized_value || d.raw_text || (d.validation_status === "missing" ? "Not detected on the label" : null);
+    const value =
+      d.normalized_value ||
+      d.raw_text ||
+      (d.validation_status === "missing" ? "Not detected on the label" : null);
     if (value) para(value);
     if (d.notes) para(`Note: ${d.notes}`, { size: 8, color: [100, 100, 100] });
-    if (d.confidence_score != null) para(`Confidence ${Math.round(d.confidence_score * 100)}%`, { size: 8, color: [100, 100, 100] });
+    if (d.confidence_score != null)
+      para(`Confidence ${Math.round(d.confidence_score * 100)}%`, {
+        size: 8,
+        color: [100, 100, 100],
+      });
     y += 2;
   });
   if (data.declarations.length === 0) para("No declarations were extracted.");
@@ -163,10 +191,12 @@ export function buildInspectionPdf(data: ReportData): jsPDF {
     para(v.violation_type, { bold: true });
     if (v.description) para(v.description);
     if (v.evidence) para(`Evidence: ${v.evidence}`, { size: 8, color: [100, 100, 100] });
-    if (v.recommendation) para(`Corrective action: ${v.recommendation}`, { size: 8.5, color: [17, 94, 89] });
+    if (v.recommendation)
+      para(`Corrective action: ${v.recommendation}`, { size: 8.5, color: [17, 94, 89] });
     y += 3;
   });
-  if (data.violations.length === 0) para("No violations were detected against the active rule set.");
+  if (data.violations.length === 0)
+    para("No violations were detected against the active rule set.");
 
   if (data.evidenceImages && data.evidenceImages.length > 0) {
     heading(`Evidence images (${data.evidenceImages.length})`);

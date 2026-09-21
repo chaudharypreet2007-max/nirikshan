@@ -6,15 +6,27 @@ import { adminListInspections } from "@/lib/admin.functions";
 import { PageHeader, Panel, EmptyRow, StatusPill } from "@/components/admin-ui";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/inspections")({
   head: () => ({
     meta: [
       { title: "Inspection management — Nirikshan AI admin" },
-      { name: "description", content: "Platform-wide inspection records with portal, risk and compliance filters." },
+      {
+        name: "description",
+        content: "Platform-wide inspection records with portal, risk and compliance filters.",
+      },
       { property: "og:title", content: "Inspection management — Nirikshan AI admin" },
-      { property: "og:description", content: "Every inspection across both portals, with full audit logging." },
+      {
+        property: "og:description",
+        content: "Every inspection across both portals, with full audit logging.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -54,8 +66,16 @@ function InspectionsPage() {
       />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <Input placeholder="Search product, inspector, location…" value={search} onChange={(e) => setSearch(e.target.value)} />
-        <Pick value={portal} onChange={setPortal} options={{ all: "All portals", government: "Government", private: "Business" }} />
+        <Input
+          placeholder="Search product, inspector, location…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Pick
+          value={portal}
+          onChange={setPortal}
+          options={{ all: "All portals", government: "Government", private: "Business" }}
+        />
         <Pick
           value={status}
           onChange={setStatus}
@@ -67,7 +87,11 @@ function InspectionsPage() {
             processing: "Processing",
           }}
         />
-        <Pick value={risk} onChange={setRisk} options={{ all: "All risk levels", high: "High", medium: "Medium", low: "Low" }} />
+        <Pick
+          value={risk}
+          onChange={setRisk}
+          options={{ all: "All risk levels", high: "High", medium: "Medium", low: "Low" }}
+        />
         <div className="space-y-1.5">
           <Label htmlFor="from">From</Label>
           <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
@@ -115,7 +139,9 @@ function InspectionsPage() {
                     </td>
                     <td className="px-5 py-3 font-medium">{r.product_name ?? "—"}</td>
                     <td className="px-5 py-3 text-muted-foreground">{r.inspector_name}</td>
-                    <td className="px-5 py-3 text-muted-foreground">{r.organization_name ?? "—"}</td>
+                    <td className="px-5 py-3 text-muted-foreground">
+                      {r.organization_name ?? "—"}
+                    </td>
                     <td className="px-5 py-3 text-muted-foreground">
                       {new Date(r.inspection_date).toLocaleString()}
                     </td>

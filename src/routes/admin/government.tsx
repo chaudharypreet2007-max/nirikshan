@@ -7,9 +7,15 @@ export const Route = createFileRoute("/admin/government")({
   head: () => ({
     meta: [
       { title: "Government management — Nirikshan AI admin" },
-      { name: "description", content: "Manage government organisations, inspectors and enforcement administrators." },
+      {
+        name: "description",
+        content: "Manage government organisations, inspectors and enforcement administrators.",
+      },
       { property: "og:title", content: "Government management — Nirikshan AI admin" },
-      { property: "og:description", content: "Organisations, jurisdictions and officer permissions." },
+      {
+        property: "og:description",
+        content: "Organisations, jurisdictions and officer permissions.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

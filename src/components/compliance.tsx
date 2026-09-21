@@ -37,7 +37,13 @@ const STATUS_META: Record<
   },
 };
 
-export function StatusChip({ status, className }: { status: ComplianceStatus; className?: string }) {
+export function StatusChip({
+  status,
+  className,
+}: {
+  status: ComplianceStatus;
+  className?: string;
+}) {
   const meta = STATUS_META[status] ?? STATUS_META.processing;
   const Icon = meta.icon;
   return (
@@ -62,7 +68,12 @@ export function SeverityChip({ severity }: { severity: string }) {
     low: "bg-info-soft text-info",
   };
   return (
-    <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", map[severity] ?? map["low"])}>
+    <span
+      className={cn(
+        "rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
+        map[severity] ?? map["low"],
+      )}
+    >
       {severity}
     </span>
   );
@@ -85,7 +96,12 @@ export function ScoreDial({
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="relative" style={{ width: size, height: size }}>
-        <svg viewBox="0 0 128 128" className="size-full -rotate-90" role="img" aria-label={`Compliance score ${score} of 100`}>
+        <svg
+          viewBox="0 0 128 128"
+          className="size-full -rotate-90"
+          role="img"
+          aria-label={`Compliance score ${score} of 100`}
+        >
           <circle cx="64" cy="64" r={radius} className="fill-none stroke-muted" strokeWidth="10" />
           <circle
             cx="64"
@@ -100,7 +116,9 @@ export function ScoreDial({
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className={cn("font-display text-3xl font-bold", meta.text)}>{score}</span>
-          <span className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">score</span>
+          <span className="text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+            score
+          </span>
         </div>
       </div>
       <StatusChip status={status} />

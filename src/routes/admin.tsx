@@ -106,7 +106,9 @@ function AdminLayout() {
         </nav>
 
         <div className="safe-pb border-t border-sidebar-border px-5 py-4">
-          <p className="truncate text-sm font-semibold">{profile?.full_name ?? profile?.email ?? "Signed in"}</p>
+          <p className="truncate text-sm font-semibold">
+            {profile?.full_name ?? profile?.email ?? "Signed in"}
+          </p>
           <p className="truncate text-xs text-sidebar-foreground/70">{profile?.email}</p>
           <Button
             variant="ghost"
@@ -132,7 +134,11 @@ function AdminLayout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="safe-px sticky top-0 z-20 flex items-center gap-3 border-b border-border bg-background/90 py-3 backdrop-blur lg:hidden">
-          <button className="rounded-md p-2" onClick={() => setOpen(true)} aria-label="Open navigation">
+          <button
+            className="rounded-md p-2"
+            onClick={() => setOpen(true)}
+            aria-label="Open navigation"
+          >
             <Menu className="size-5" />
           </button>
           <Wordmark />

@@ -10,9 +10,15 @@ export const Route = createFileRoute("/admin/overview")({
   head: () => ({
     meta: [
       { title: "Platform overview — Nirikshan AI admin" },
-      { name: "description", content: "Government and business portal activity side by side for head administrators." },
+      {
+        name: "description",
+        content: "Government and business portal activity side by side for head administrators.",
+      },
       { property: "og:title", content: "Platform overview — Nirikshan AI admin" },
-      { property: "og:description", content: "Switch between all, government and business platform activity." },
+      {
+        property: "og:description",
+        content: "Switch between all, government and business platform activity.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -39,7 +45,10 @@ function Overview() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Platform overview" description="Cross-portal activity across the whole Nirikshan AI estate." />
+      <PageHeader
+        title="Platform overview"
+        description="Cross-portal activity across the whole Nirikshan AI estate."
+      />
 
       <Tabs value={scope} onValueChange={(v) => setScope(v as Scope)}>
         <TabsList className="grid w-full max-w-md grid-cols-3">
@@ -59,7 +68,11 @@ function Overview() {
             <KpiCard label="Inspections completed" value={s["gov_inspections"]} />
             <KpiCard label="Pending inspections" value={s["processing"]} tone="warning" />
             <KpiCard label="Violations detected" value={s["open_violations"]} tone="warning" />
-            <KpiCard label="High-risk inspections" value={s["high_risk_inspections"]} tone="critical" />
+            <KpiCard
+              label="High-risk inspections"
+              value={s["high_risk_inspections"]}
+              tone="critical"
+            />
             <KpiCard label="Supervisor reviews" value={s["total_reviews"]} />
           </div>
         </section>

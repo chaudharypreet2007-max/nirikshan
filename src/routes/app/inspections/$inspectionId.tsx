@@ -1,20 +1,43 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, MapPin, CalendarClock, Package, FileDown, Loader2, User, ScanSearch, AlertTriangle } from "lucide-react";
+import {
+  ArrowLeft,
+  MapPin,
+  CalendarClock,
+  Package,
+  FileDown,
+  Loader2,
+  User,
+  ScanSearch,
+  AlertTriangle,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { ReviewPanel } from "@/components/review-panel";
-import { ScoreDial, StatusChip, SeverityChip, DECLARATION_LABELS, type ComplianceStatus } from "@/components/compliance";
+import {
+  ScoreDial,
+  StatusChip,
+  SeverityChip,
+  DECLARATION_LABELS,
+  type ComplianceStatus,
+} from "@/components/compliance";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/inspections/$inspectionId")({
   head: () => ({
     meta: [
       { title: "Inspection report — Nirikshan AI" },
-      { name: "description", content: "Declaration-by-declaration compliance report with evidence and confidence scores." },
+      {
+        name: "description",
+        content:
+          "Declaration-by-declaration compliance report with evidence and confidence scores.",
+      },
       { property: "og:title", content: "Inspection report — Nirikshan AI" },
-      { property: "og:description", content: "Detailed Legal Metrology verdict, violations and corrective actions." },
+      {
+        property: "og:description",
+        content: "Detailed Legal Metrology verdict, violations and corrective actions.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -47,7 +70,6 @@ function InspectionDetail() {
   const { profile } = useAuth();
   const [downloading, setDownloading] = useState(false);
 
-
   const { data, isLoading, error } = useQuery({
     queryKey: ["inspection", inspectionId],
     queryFn: async () => {
@@ -62,7 +84,6 @@ function InspectionDetail() {
       return data;
     },
   });
-
 
   const imagePaths: string[] = (() => {
     const raw = data?.ai_raw as { image_paths?: unknown } | null | undefined;
@@ -92,7 +113,8 @@ function InspectionDetail() {
     return (
       <div className="surface-panel p-8 text-center">
         <p className="text-sm text-muted-foreground">
-          Access denied. This record either does not exist or belongs to another officer or organisation.
+          Access denied. This record either does not exist or belongs to another officer or
+          organisation.
         </p>
         <Button asChild className="mt-4">
           <Link to="/app/inspections">Back to inspections</Link>
@@ -102,9 +124,12 @@ function InspectionDetail() {
 
   const declarations = (data.extracted_declarations ?? []) as unknown as Declaration[];
   const violations = (data.violations ?? []) as unknown as Violation[];
-  const product = data.products as unknown as
-    | { product_name: string; brand: string | null; product_category: string | null; package_type: string | null }
-    | null;
+  const product = data.products as unknown as {
+    product_name: string;
+    brand: string | null;
+    product_category: string | null;
+    package_type: string | null;
+  } | null;
   const inspector = data.profiles as unknown as { full_name: string | null } | null;
   const inspectorName = inspector?.full_name ?? "Inspector";
 
@@ -148,19 +173,21 @@ function InspectionDetail() {
         inspectorName,
         barcode: data.barcode ?? null,
         barcodeSource: data.barcode_source ?? null,
-        matchScore: data.product_match_score != null ? Math.round(Number(data.product_match_score)) : null,
+        matchScore:
+          data.product_match_score != null ? Math.round(Number(data.product_match_score)) : null,
         declarations,
         violations,
         evidenceImages: evidenceImages.filter((e): e is { dataUrl: string; label: string } => !!e),
       });
-      const slug = (product?.product_name ?? "inspection").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+      const slug = (product?.product_name ?? "inspection")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
       doc.save(`nirikshan-report-${slug || inspectionId}.pdf`);
     } finally {
       setDownloading(false);
     }
   };
-
-
 
   return (
     <div className="space-y-6">
@@ -171,7 +198,11 @@ function InspectionDetail() {
           </Link>
         </Button>
         <Button onClick={exportPdf} disabled={downloading} size="sm" className="gap-2">
-          {downloading ? <Loader2 className="size-4 animate-spin" /> : <FileDown className="size-4" />}
+          {downloading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <FileDown className="size-4" />
+          )}
           Export PDF report
         </Button>
       </div>
@@ -180,7 +211,9 @@ function InspectionDetail() {
         <ScoreDial score={data.compliance_score ?? 0} status={data.status as ComplianceStatus} />
         <div className="min-w-0 flex-1">
           <StatusChip status={data.status as ComplianceStatus} />
-          <h1 className="mt-3 font-display text-2xl font-bold">{product?.product_name ?? "Unidentified product"}</h1>
+          <h1 className="mt-3 font-display text-2xl font-bold">
+            {product?.product_name ?? "Unidentified product"}
+          </h1>
           <p className="text-sm text-muted-foreground">{product?.brand ?? "Brand not declared"}</p>
           <dl className="mt-4 grid gap-2 text-sm text-muted-foreground sm:grid-cols-2">
             <div className="flex items-center gap-2">
@@ -218,12 +251,14 @@ function InspectionDetail() {
           <AlertTriangle className="size-5 shrink-0 text-review" aria-hidden="true" />
           <div className="text-sm">
             <p className="font-semibold text-review">
-              {Number(data.product_match_score) < 45 ? "Data mismatch" : "Product identity uncertain"}
+              {Number(data.product_match_score) < 45
+                ? "Data mismatch"
+                : "Product identity uncertain"}
             </p>
             <p className="mt-1 text-muted-foreground">
               The barcode record and the package declaration do not fully agree (match{" "}
-              {Math.round(Number(data.product_match_score))}%). Manual verification is required — this is not, by
-              itself, evidence of fraud.
+              {Math.round(Number(data.product_match_score))}%). Manual verification is required —
+              this is not, by itself, evidence of fraud.
             </p>
           </div>
         </section>
@@ -253,11 +288,15 @@ function InspectionDetail() {
               {declarations.map((d) => (
                 <li key={d.id} className="px-5 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-medium">{DECLARATION_LABELS[d.declaration_type] ?? d.declaration_type}</p>
+                    <p className="font-medium">
+                      {DECLARATION_LABELS[d.declaration_type] ?? d.declaration_type}
+                    </p>
                     <PresenceChip presence={d.validation_status} />
                   </div>
                   {d.normalized_value || d.raw_text ? (
-                    <p className="mt-1 text-sm text-muted-foreground">{d.normalized_value || d.raw_text}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {d.normalized_value || d.raw_text}
+                    </p>
                   ) : d.validation_status === "missing" ? (
                     <p className="mt-1 text-sm text-muted-foreground">Not detected on the label</p>
                   ) : null}
@@ -275,7 +314,9 @@ function InspectionDetail() {
               ))}
 
               {declarations.length === 0 ? (
-                <li className="px-5 py-8 text-sm text-muted-foreground">No declarations were extracted.</li>
+                <li className="px-5 py-8 text-sm text-muted-foreground">
+                  No declarations were extracted.
+                </li>
               ) : null}
             </ul>
           </section>
@@ -296,7 +337,9 @@ function InspectionDetail() {
                     ) : null}
                   </div>
                   <p className="mt-2 font-medium">{v.violation_type}</p>
-                  {v.description ? <p className="mt-1 text-sm text-muted-foreground">{v.description}</p> : null}
+                  {v.description ? (
+                    <p className="mt-1 text-sm text-muted-foreground">{v.description}</p>
+                  ) : null}
                   {v.evidence ? (
                     <p className="mt-1 text-xs text-muted-foreground">Evidence: {v.evidence}</p>
                   ) : null}
@@ -328,7 +371,11 @@ function InspectionDetail() {
                   <span className="absolute left-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs font-semibold text-foreground">
                     {i + 1}
                   </span>
-                  <img src={url} alt={`Scanned package label ${i + 1}`} className="w-full object-contain" />
+                  <img
+                    src={url}
+                    alt={`Scanned package label ${i + 1}`}
+                    className="w-full object-contain"
+                  />
                 </li>
               ))}
             </ul>
@@ -349,5 +396,9 @@ function PresenceChip({ presence }: { presence: string }) {
     missing: { label: "Missing", cls: "bg-violation-soft text-violation" },
   };
   const item = map[presence] ?? { label: presence, cls: "bg-muted text-muted-foreground" };
-  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${item.cls}`}>{item.label}</span>;
+  return (
+    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${item.cls}`}>
+      {item.label}
+    </span>
+  );
 }

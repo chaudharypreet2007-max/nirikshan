@@ -23,7 +23,12 @@ const AnalyzeInput = z.object({
 /** Token-overlap similarity, 0-1. */
 function similarity(a?: string | null, b?: string | null) {
   if (!a || !b) return null;
-  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
+  const norm = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter(Boolean);
   const x = norm(a);
   const y = norm(b);
   if (!x.length || !y.length) return null;
@@ -31,7 +36,6 @@ function similarity(a?: string | null, b?: string | null) {
   const hits = x.filter((t) => setY.has(t)).length;
   return (2 * hits) / (x.length + y.length);
 }
-
 
 type Declaration = {
   declaration_type: string;
@@ -104,7 +108,8 @@ export const analyzeLabel = createServerFn({ method: "POST" })
         throw new Error("Could not read one of the uploaded label images.");
       }
       const imageResponse = await fetch(signed.signedUrl);
-      if (!imageResponse.ok) throw new Error("Could not download one of the uploaded label images.");
+      if (!imageResponse.ok)
+        throw new Error("Could not download one of the uploaded label images.");
       const contentType = imageResponse.headers.get("content-type") ?? "image/jpeg";
       const bytes = Buffer.from(await imageResponse.arrayBuffer()).toString("base64");
       dataUrls.push(`data:${contentType};base64,${bytes}`);
@@ -116,7 +121,10 @@ export const analyzeLabel = createServerFn({ method: "POST" })
       .eq("status", "active");
 
     const rulesText = (rules ?? [])
-      .map((r) => `${r.rule_code} | key=${r.declaration_key} | ${r.rule_name} | severity=${r.severity} | ${r.description ?? ""}`)
+      .map(
+        (r) =>
+          `${r.rule_code} | key=${r.declaration_key} | ${r.rule_name} | severity=${r.severity} | ${r.description ?? ""}`,
+      )
       .join("\n");
 
     const systemPrompt = `You are Nirikshan AI, a Legal Metrology (Packaged Commodities) Rules, 2011 compliance analyst for India.
@@ -164,7 +172,10 @@ Return JSON with this exact shape:
           {
             role: "user",
             content: [
-              { type: "text", text: `${userPrompt}\n\nNumber of images of this package: ${dataUrls.length}.` },
+              {
+                type: "text",
+                text: `${userPrompt}\n\nNumber of images of this package: ${dataUrls.length}.`,
+              },
               ...dataUrls.map((url) => ({ type: "image_url" as const, image_url: { url } })),
             ],
           },
@@ -174,8 +185,12 @@ Return JSON with this exact shape:
 
     if (!response.ok) {
       const body = await response.text();
-      if (response.status === 429) throw new Error("AI is rate limited right now. Please retry in a moment.");
-      if (response.status === 402) throw new Error("AI credits are exhausted for this workspace. Add credits to continue scanning.");
+      if (response.status === 429)
+        throw new Error("AI is rate limited right now. Please retry in a moment.");
+      if (response.status === 402)
+        throw new Error(
+          "AI credits are exhausted for this workspace. Add credits to continue scanning.",
+        );
       throw new Error(`AI analysis failed (${response.status}): ${body.slice(0, 300)}`);
     }
 
@@ -189,8 +204,17 @@ Return JSON with this exact shape:
     }
 
     const declarations = Array.isArray(ai.declarations) ? ai.declarations : [];
-    const mandatoryKeys = ["manufacturer_details", "commodity_name", "net_quantity", "manufacture_date", "mrp", "consumer_care"];
-    const mandatory = mandatoryKeys.map((key) => declarations.find((d) => d.declaration_type === key));
+    const mandatoryKeys = [
+      "manufacturer_details",
+      "commodity_name",
+      "net_quantity",
+      "manufacture_date",
+      "mrp",
+      "consumer_care",
+    ];
+    const mandatory = mandatoryKeys.map((key) =>
+      declarations.find((d) => d.declaration_type === key),
+    );
     const mandatoryPoints =
       mandatory.reduce((acc, d) => {
         if (!d) return acc;
@@ -213,7 +237,11 @@ Return JSON with this exact shape:
     const findings = Array.isArray(ai.findings) ? ai.findings : [];
     const hasCritical = findings.some((f) => f.severity === "critical");
     const status: "compliant" | "needs_review" | "non_compliant" =
-      score >= 85 && !hasCritical ? "compliant" : score >= 60 && !hasCritical ? "needs_review" : "non_compliant";
+      score >= 85 && !hasCritical
+        ? "compliant"
+        : score >= 60 && !hasCritical
+          ? "needs_review"
+          : "non_compliant";
 
     const { data: profile } = await supabase
       .from("profiles")
@@ -255,8 +283,10 @@ Return JSON with this exact shape:
           product_category: data.productCategory || ai.product_category,
           barcode,
           parent_product_id: parentId,
-          variant_name: parentId ? (data.packageType || ai.package_type || "Variant") : null,
-          net_quantity: declarations.find((d) => d.declaration_type === "net_quantity")?.normalized_value ?? null,
+          variant_name: parentId ? data.packageType || ai.package_type || "Variant" : null,
+          net_quantity:
+            declarations.find((d) => d.declaration_type === "net_quantity")?.normalized_value ??
+            null,
           organization_id: profile?.organization_id ?? null,
           created_by: userId,
         })
@@ -274,7 +304,9 @@ Return JSON with this exact shape:
     const nameScore = similarity(data.barcodeProductName, ai.product_name ?? resolvedName);
     const mfrScore = similarity(data.barcodeManufacturer, ocrManufacturer);
     const parts = [nameScore, mfrScore].filter((n): n is number => n != null);
-    const matchScore = parts.length ? Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100) : null;
+    const matchScore = parts.length
+      ? Math.round((parts.reduce((a, b) => a + b, 0) / parts.length) * 100)
+      : null;
 
     const { data: inspection, error: inspectionError } = await supabase
       .from("inspections")
@@ -316,11 +348,16 @@ Return JSON with this exact shape:
         external_brand: data.brand ?? null,
         ocr_brand: ai.brand ?? null,
         match_score: matchScore,
-        status: matchScore == null ? "unknown" : matchScore >= 75 ? "matched" : matchScore >= 45 ? "uncertain" : "mismatch",
+        status:
+          matchScore == null
+            ? "unknown"
+            : matchScore >= 75
+              ? "matched"
+              : matchScore >= 45
+                ? "uncertain"
+                : "mismatch",
       });
     }
-
-
 
     if (declarations.length) {
       await supabase.from("extracted_declarations").insert(

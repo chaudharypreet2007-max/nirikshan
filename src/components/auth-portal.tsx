@@ -123,11 +123,22 @@ export function AuthPortal({ portal }: { portal: Portal }) {
           </p>
           <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
             {(isGov
-              ? ["Field scanning with GPS and timestamp", "Violation and enforcement workflow", "Jurisdiction-level analytics"]
-              : ["Pre-dispatch label verification", "Corrective action recommendations", "Product compliance repository"]
+              ? [
+                  "Field scanning with GPS and timestamp",
+                  "Violation and enforcement workflow",
+                  "Jurisdiction-level analytics",
+                ]
+              : [
+                  "Pre-dispatch label verification",
+                  "Corrective action recommendations",
+                  "Product compliance repository",
+                ]
             ).map((item) => (
               <li key={item} className="flex gap-2">
-                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                <span
+                  className="mt-2 size-1.5 shrink-0 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
                 {item}
               </li>
             ))}
@@ -153,7 +164,13 @@ export function AuthPortal({ portal }: { portal: Portal }) {
                   value={email}
                   onChange={setEmail}
                 />
-                <Field id="password" label="Password" type="password" value={password} onChange={setPassword} />
+                <Field
+                  id="password"
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={setPassword}
+                />
                 <Button type="submit" className="h-11 w-full" disabled={busy}>
                   {busy ? "Verifying…" : "Sign in"}
                 </Button>
@@ -170,10 +187,27 @@ export function AuthPortal({ portal }: { portal: Portal }) {
                   onChange={setOrgOrId}
                 />
                 {isGov ? (
-                  <Field id="jurisdiction" label="Jurisdiction" value={jurisdiction} onChange={setJurisdiction} />
+                  <Field
+                    id="jurisdiction"
+                    label="Jurisdiction"
+                    value={jurisdiction}
+                    onChange={setJurisdiction}
+                  />
                 ) : null}
-                <Field id="email2" label="Work email" type="email" value={email} onChange={setEmail} />
-                <Field id="password2" label="Password" type="password" value={password} onChange={setPassword} />
+                <Field
+                  id="email2"
+                  label="Work email"
+                  type="email"
+                  value={email}
+                  onChange={setEmail}
+                />
+                <Field
+                  id="password2"
+                  label="Password"
+                  type="password"
+                  value={password}
+                  onChange={setPassword}
+                />
                 <Button type="submit" className="h-11 w-full" disabled={busy}>
                   {busy ? "Creating account…" : "Create account"}
                 </Button>
@@ -193,11 +227,23 @@ export function AuthPortal({ portal }: { portal: Portal }) {
           <p className="mt-5 text-xs text-muted-foreground">
             {isGov ? (
               <>
-                Not an enforcement user? <Link to="/auth/company" className="font-semibold text-primary underline-offset-4 hover:underline">Business portal</Link>
+                Not an enforcement user?{" "}
+                <Link
+                  to="/auth/company"
+                  className="font-semibold text-primary underline-offset-4 hover:underline"
+                >
+                  Business portal
+                </Link>
               </>
             ) : (
               <>
-                Government officer? <Link to="/auth/government" className="font-semibold text-primary underline-offset-4 hover:underline">Enforcement portal</Link>
+                Government officer?{" "}
+                <Link
+                  to="/auth/government"
+                  className="font-semibold text-primary underline-offset-4 hover:underline"
+                >
+                  Enforcement portal
+                </Link>
               </>
             )}
           </p>

@@ -11,9 +11,15 @@ export const Route = createFileRoute("/app/inspections/")({
   head: () => ({
     meta: [
       { title: "Inspections — Nirikshan AI" },
-      { name: "description", content: "Search and filter every packaged commodity compliance inspection on record." },
+      {
+        name: "description",
+        content: "Search and filter every packaged commodity compliance inspection on record.",
+      },
       { property: "og:title", content: "Inspections — Nirikshan AI" },
-      { property: "og:description", content: "Full inspection history with compliance scores and verdicts." },
+      {
+        property: "og:description",
+        content: "Full inspection history with compliance scores and verdicts.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -59,7 +65,8 @@ function Inspections() {
   const rows = (data ?? []).filter((r) => {
     if (filter !== "all" && r.status !== filter) return false;
     if (!q.trim()) return true;
-    const hay = `${r.products?.product_name ?? ""} ${r.products?.brand ?? ""} ${r.location_label ?? ""} ${r.barcode ?? ""} ${r.id}`.toLowerCase();
+    const hay =
+      `${r.products?.product_name ?? ""} ${r.products?.brand ?? ""} ${r.location_label ?? ""} ${r.barcode ?? ""} ${r.id}`.toLowerCase();
     return hay.includes(q.trim().toLowerCase());
   });
 
@@ -81,7 +88,10 @@ function Inspections() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+          <Search
+            className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
             className="h-11 pl-9"
             placeholder="Search product, brand, location or inspection ID"
@@ -110,7 +120,9 @@ function Inspections() {
         {isLoading ? (
           <p className="px-5 py-8 text-sm text-muted-foreground">Loading inspections…</p>
         ) : rows.length === 0 ? (
-          <p className="px-5 py-10 text-center text-sm text-muted-foreground">No inspections match this view.</p>
+          <p className="px-5 py-10 text-center text-sm text-muted-foreground">
+            No inspections match this view.
+          </p>
         ) : (
           <ul className="divide-y divide-border">
             {rows.map((r) => (
@@ -121,14 +133,18 @@ function Inspections() {
                   className="flex flex-wrap items-center gap-3 px-5 py-4 transition-colors hover:bg-muted"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{r.products?.product_name ?? "Unidentified product"}</p>
+                    <p className="truncate font-medium">
+                      {r.products?.product_name ?? "Unidentified product"}
+                    </p>
                     <p className="truncate text-xs text-muted-foreground">
                       {r.products?.brand ? `${r.products.brand} · ` : ""}
                       {new Date(r.inspection_date).toLocaleString()}
                       {r.location_label ? ` · ${r.location_label}` : ""}
                     </p>
                   </div>
-                  <span className="font-display text-lg font-semibold">{r.compliance_score ?? "—"}</span>
+                  <span className="font-display text-lg font-semibold">
+                    {r.compliance_score ?? "—"}
+                  </span>
                   <StatusChip status={r.status} />
                 </Link>
               </li>
