@@ -1,5 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShieldCheck, Building2, ScanLine, Gavel, FileCheck2, MapPin, Languages, Brain } from "lucide-react";
+import {
+  ShieldCheck,
+  Building2,
+  ScanLine,
+  Gavel,
+  FileCheck2,
+  MapPin,
+  Languages,
+  Brain,
+} from "lucide-react";
 import { Wordmark } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 
@@ -26,12 +35,36 @@ export const Route = createFileRoute("/")({
 });
 
 const CAPABILITIES = [
-  { icon: ScanLine, title: "Label scanning", body: "Capture or upload a package photo and get a structured read of every declaration." },
-  { icon: Languages, title: "Multilingual OCR", body: "Declarations in English and Indian languages are extracted and normalised." },
-  { icon: Gavel, title: "Rule engine", body: "Configurable Legal Metrology rules — no logic frozen inside the interface." },
-  { icon: Brain, title: "Explainable results", body: "Every violation carries evidence, confidence and a corrective recommendation." },
-  { icon: MapPin, title: "Field audit trail", body: "Location, timestamp and inspector identity recorded with each inspection." },
-  { icon: FileCheck2, title: "Compliance scoring", body: "A 0-100 score with a transparent breakdown of where points were lost." },
+  {
+    icon: ScanLine,
+    title: "Label scanning",
+    body: "Capture or upload a package photo and get a structured read of every declaration.",
+  },
+  {
+    icon: Languages,
+    title: "Multilingual OCR",
+    body: "Declarations in English and Indian languages are extracted and normalised.",
+  },
+  {
+    icon: Gavel,
+    title: "Rule engine",
+    body: "Configurable Legal Metrology rules — no logic frozen inside the interface.",
+  },
+  {
+    icon: Brain,
+    title: "Explainable results",
+    body: "Every violation carries evidence, confidence and a corrective recommendation.",
+  },
+  {
+    icon: MapPin,
+    title: "Field audit trail",
+    body: "Location, timestamp and inspector identity recorded with each inspection.",
+  },
+  {
+    icon: FileCheck2,
+    title: "Compliance scoring",
+    body: "A 0-100 score with a transparent breakdown of where points were lost.",
+  },
 ];
 
 function Landing() {
@@ -50,9 +83,9 @@ function Landing() {
             Packaged commodity compliance, verified in one scan.
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Nirikshan AI reads mandatory declarations on a package, checks them against configurable rules, and returns an
-            explainable compliance verdict with evidence — for enforcement officers in the field and for compliance teams
-            before dispatch.
+            Nirikshan AI reads mandatory declarations on a package, checks them against configurable
+            rules, and returns an explainable compliance verdict with evidence — for enforcement
+            officers in the field and for compliance teams before dispatch.
           </p>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
@@ -78,7 +111,10 @@ function Landing() {
 
           <p className="mt-6 text-sm text-muted-foreground">
             Platform administrator?{" "}
-            <Link to="/admin/login" className="font-semibold text-primary underline-offset-4 hover:underline">
+            <Link
+              to="/admin/login"
+              className="font-semibold text-primary underline-offset-4 hover:underline"
+            >
               Main Administration Portal
             </Link>
           </p>
@@ -102,8 +138,8 @@ function Landing() {
       </main>
 
       <footer className="safe-px safe-pb mx-auto max-w-6xl py-8 text-sm text-muted-foreground">
-        Nirikshan AI is a decision-support system. Low-confidence results are flagged for human review and do not replace
-        an officer's determination.
+        Nirikshan AI is a decision-support system. Low-confidence results are flagged for human
+        review and do not replace an officer's determination.
       </footer>
     </div>
   );
@@ -137,7 +173,9 @@ function PortalCard({
       >
         <Icon className="size-5" aria-hidden="true" />
       </span>
-      <p className="mt-4 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">{eyebrow}</p>
+      <p className="mt-4 text-xs font-semibold tracking-[0.14em] text-muted-foreground uppercase">
+        {eyebrow}
+      </p>
       <h2 className="mt-1 font-display text-xl font-semibold">{title}</h2>
       <p className="mt-2 flex-1 text-sm text-muted-foreground">{body}</p>
       <Button asChild className="mt-6 w-full sm:w-auto">

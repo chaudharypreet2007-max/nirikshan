@@ -8,9 +8,15 @@ export const Route = createFileRoute("/admin/dashboard")({
   head: () => ({
     meta: [
       { title: "Admin dashboard — Nirikshan AI" },
-      { name: "description", content: "Platform-wide key indicators for Nirikshan AI head administrators." },
+      {
+        name: "description",
+        content: "Platform-wide key indicators for Nirikshan AI head administrators.",
+      },
       { property: "og:title", content: "Admin dashboard — Nirikshan AI" },
-      { property: "og:description", content: "Users, organisations, products, inspections and violations at a glance." },
+      {
+        property: "og:description",
+        content: "Users, organisations, products, inspections and violations at a glance.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -43,7 +49,11 @@ function AdminDashboard() {
             <KpiCard label="Government users" value={s["government_users"]} />
             <KpiCard label="Business users" value={s["business_users"]} />
             <KpiCard label="Inspectors" value={s["inspectors"]} />
-            <KpiCard label="Organisations" value={s["organizations"]} hint="Government and business" />
+            <KpiCard
+              label="Organisations"
+              value={s["organizations"]}
+              hint="Government and business"
+            />
             <KpiCard label="Businesses" value={s["business_organizations"]} />
             <KpiCard label="Products" value={s["products"]} />
             <KpiCard label="Inspections" value={s["inspections"]} />
@@ -51,9 +61,17 @@ function AdminDashboard() {
             <KpiCard label="Non-compliant" value={s["non_compliant"]} tone="critical" />
             <KpiCard label="Pending reviews" value={s["pending_reviews"]} tone="warning" />
             <KpiCard label="Open violations" value={s["open_violations"]} tone="warning" />
-            <KpiCard label="High-risk inspections" value={s["high_risk_inspections"]} tone="critical" />
+            <KpiCard
+              label="High-risk inspections"
+              value={s["high_risk_inspections"]}
+              tone="critical"
+            />
             <KpiCard label="Suspended accounts" value={s["suspended_accounts"]} tone="warning" />
-            <KpiCard label="Active organisations" value={s["active_organizations"]} tone="positive" />
+            <KpiCard
+              label="Active organisations"
+              value={s["active_organizations"]}
+              tone="positive"
+            />
             <KpiCard label="Needs review" value={s["needs_review"]} tone="warning" />
           </div>
 
@@ -61,8 +79,16 @@ function AdminDashboard() {
             <div className="space-y-3 px-5 py-4">
               {[
                 { label: "Compliant", value: Number(s["compliant"] ?? 0), className: "bg-success" },
-                { label: "Needs review", value: Number(s["needs_review"] ?? 0), className: "bg-warning" },
-                { label: "Non-compliant", value: Number(s["non_compliant"] ?? 0), className: "bg-destructive" },
+                {
+                  label: "Needs review",
+                  value: Number(s["needs_review"] ?? 0),
+                  className: "bg-warning",
+                },
+                {
+                  label: "Non-compliant",
+                  value: Number(s["non_compliant"] ?? 0),
+                  className: "bg-destructive",
+                },
               ].map((row) => {
                 const total = Math.max(Number(s["inspections"] ?? 0), 1);
                 const pct = Math.round((row.value / total) * 100);
@@ -91,7 +117,10 @@ function AdminDashboard() {
         ) : (
           <ul className="divide-y divide-border">
             {(logs ?? []).slice(0, 15).map((log) => (
-              <li key={log.id} className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-sm">
+              <li
+                key={log.id}
+                className="flex flex-wrap items-center justify-between gap-2 px-5 py-3 text-sm"
+              >
                 <span className="font-medium capitalize">{log.action.replace(/_/g, " ")}</span>
                 <span className="text-muted-foreground">
                   {log.actor} · {new Date(log.created_at).toLocaleString()}

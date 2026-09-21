@@ -23,15 +23,27 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/users")({
   head: () => ({
     meta: [
       { title: "User management — Nirikshan AI admin" },
-      { name: "description", content: "Create, edit, suspend and re-assign every Nirikshan AI platform account." },
+      {
+        name: "description",
+        content: "Create, edit, suspend and re-assign every Nirikshan AI platform account.",
+      },
       { property: "og:title", content: "User management — Nirikshan AI admin" },
-      { property: "og:description", content: "Accounts, roles, organisations and account status in one place." },
+      {
+        property: "og:description",
+        content: "Accounts, roles, organisations and account status in one place.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -39,7 +51,14 @@ export const Route = createFileRoute("/admin/users")({
   component: UsersPage,
 });
 
-const ROLES = ["main_admin", "super_admin", "gov_admin", "inspector", "org_admin", "org_user"] as const;
+const ROLES = [
+  "main_admin",
+  "super_admin",
+  "gov_admin",
+  "inspector",
+  "org_admin",
+  "org_user",
+] as const;
 type Role = (typeof ROLES)[number];
 type Portal = "government" | "private" | "admin";
 
@@ -124,10 +143,24 @@ function UsersPage() {
       />
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Input placeholder="Search name, email, ID…" value={search} onChange={(e) => setSearch(e.target.value)} />
-        <Filter value={portal} onChange={setPortal} label="Portal" options={["government", "private", "admin"]} />
+        <Input
+          placeholder="Search name, email, ID…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Filter
+          value={portal}
+          onChange={setPortal}
+          label="Portal"
+          options={["government", "private", "admin"]}
+        />
         <Filter value={role} onChange={setRole} label="Role" options={[...ROLES]} />
-        <Filter value={status} onChange={setStatus} label="Status" options={["active", "suspended", "deactivated"]} />
+        <Filter
+          value={status}
+          onChange={setStatus}
+          label="Status"
+          options={["active", "suspended", "deactivated"]}
+        />
       </div>
 
       <Panel title={`Accounts (${users?.length ?? 0})`}>
@@ -157,7 +190,9 @@ function UsersPage() {
                       <p className="text-xs text-muted-foreground">{u.email}</p>
                     </td>
                     <td className="px-5 py-3 capitalize text-muted-foreground">{u.portal_type}</td>
-                    <td className="px-5 py-3 capitalize">{u.roles.join(", ").replace(/_/g, " ") || "—"}</td>
+                    <td className="px-5 py-3 capitalize">
+                      {u.roles.join(", ").replace(/_/g, " ") || "—"}
+                    </td>
                     <td className="px-5 py-3 text-muted-foreground">
                       {u.organization_name ?? u.jurisdiction ?? "—"}
                     </td>
@@ -300,8 +335,22 @@ function CreateForm({
       }}
     >
       <TextField id="c-name" label="Full name" value={fullName} onChange={setFullName} required />
-      <TextField id="c-email" label="Email" type="email" value={email} onChange={setEmail} required />
-      <TextField id="c-pass" label="Temporary password" type="password" value={password} onChange={setPassword} required />
+      <TextField
+        id="c-email"
+        label="Email"
+        type="email"
+        value={email}
+        onChange={setEmail}
+        required
+      />
+      <TextField
+        id="c-pass"
+        label="Temporary password"
+        type="password"
+        value={password}
+        onChange={setPassword}
+        required
+      />
       <div className="grid gap-4 sm:grid-cols-2">
         <SelectField
           label="Portal"
@@ -309,7 +358,12 @@ function CreateForm({
           onChange={(v) => setPortalType(v as Portal)}
           options={["government", "private", "admin"]}
         />
-        <SelectField label="Role" value={role} onChange={(v) => setRole(v as Role)} options={[...ROLES]} />
+        <SelectField
+          label="Role"
+          value={role}
+          onChange={(v) => setRole(v as Role)}
+          options={[...ROLES]}
+        />
       </div>
       <SelectField
         label="Organisation"
@@ -319,8 +373,18 @@ function CreateForm({
         labels={{ none: "No organisation", ...Object.fromEntries(orgs.map((o) => [o.id, o.name])) }}
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <TextField id="c-jur" label="Jurisdiction" value={jurisdiction} onChange={setJurisdiction} />
-        <TextField id="c-oid" label="Official / employee ID" value={officialId} onChange={setOfficialId} />
+        <TextField
+          id="c-jur"
+          label="Jurisdiction"
+          value={jurisdiction}
+          onChange={setJurisdiction}
+        />
+        <TextField
+          id="c-oid"
+          label="Official / employee ID"
+          value={officialId}
+          onChange={setOfficialId}
+        />
       </div>
       <TextField id="c-desig" label="Designation" value={designation} onChange={setDesignation} />
       <DialogFooter>
@@ -380,7 +444,12 @@ function EditForm({
     >
       <TextField id="e-name" label="Full name" value={fullName} onChange={setFullName} />
       <div className="grid gap-4 sm:grid-cols-2">
-        <SelectField label="Portal" value={portalType} onChange={setPortalType} options={["government", "private", "admin"]} />
+        <SelectField
+          label="Portal"
+          value={portalType}
+          onChange={setPortalType}
+          options={["government", "private", "admin"]}
+        />
         <SelectField label="Role" value={role} onChange={setRole} options={[...ROLES]} />
       </div>
       <SelectField
@@ -391,8 +460,18 @@ function EditForm({
         labels={{ none: "No organisation", ...Object.fromEntries(orgs.map((o) => [o.id, o.name])) }}
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <TextField id="e-jur" label="Jurisdiction" value={jurisdiction} onChange={setJurisdiction} />
-        <TextField id="e-oid" label="Official / employee ID" value={officialId} onChange={setOfficialId} />
+        <TextField
+          id="e-jur"
+          label="Jurisdiction"
+          value={jurisdiction}
+          onChange={setJurisdiction}
+        />
+        <TextField
+          id="e-oid"
+          label="Official / employee ID"
+          value={officialId}
+          onChange={setOfficialId}
+        />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <TextField id="e-desig" label="Designation" value={designation} onChange={setDesignation} />
@@ -430,7 +509,13 @@ export function TextField({
   return (
     <div className="space-y-1.5">
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} type={type} value={value} required={required} onChange={(e) => onChange(e.target.value)} />
+      <Input
+        id={id}
+        type={type}
+        value={value}
+        required={required}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </div>
   );
 }

@@ -10,9 +10,15 @@ export const Route = createFileRoute("/app/dashboard")({
   head: () => ({
     meta: [
       { title: "Compliance dashboard — Nirikshan AI" },
-      { name: "description", content: "Scan volume, compliance rate, violations and pending reviews at a glance." },
+      {
+        name: "description",
+        content: "Scan volume, compliance rate, violations and pending reviews at a glance.",
+      },
       { property: "og:title", content: "Compliance dashboard — Nirikshan AI" },
-      { property: "og:description", content: "Live packaged commodity compliance metrics for your portal." },
+      {
+        property: "og:description",
+        content: "Live packaged commodity compliance metrics for your portal.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -37,7 +43,9 @@ function Dashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("inspections")
-        .select("id, compliance_score, status, inspection_date, location_label, products(product_name, brand)")
+        .select(
+          "id, compliance_score, status, inspection_date, location_label, products(product_name, brand)",
+        )
         .order("inspection_date", { ascending: false })
         .limit(100);
       if (error) throw error;
@@ -76,14 +84,22 @@ function Dashboard() {
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Stat label="My total scans" value={total} icon={ClipboardList} />
         <Stat label="Compliance rate" value={`${rate}%`} icon={Activity} />
-        <Stat label={isGovernment ? "Non-compliant" : "Blocking issues"} value={nonCompliant} icon={ShieldAlert} tone="violation" />
+        <Stat
+          label={isGovernment ? "Non-compliant" : "Blocking issues"}
+          value={nonCompliant}
+          icon={ShieldAlert}
+          tone="violation"
+        />
         <Stat label="Pending review" value={review} icon={ShieldAlert} tone="review" />
       </section>
 
       <section className="surface-panel overflow-hidden">
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <h2 className="font-display text-base font-semibold">Recent inspections</h2>
-          <Link to="/app/inspections" className="inline-flex items-center gap-1 text-sm font-semibold text-primary">
+          <Link
+            to="/app/inspections"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-primary"
+          >
             View all <ArrowRight className="size-4" />
           </Link>
         </div>
@@ -92,7 +108,9 @@ function Dashboard() {
           <p className="px-5 py-8 text-sm text-muted-foreground">Loading inspections…</p>
         ) : rows.length === 0 ? (
           <div className="px-5 py-10 text-center">
-            <p className="text-sm text-muted-foreground">No inspections yet. Scan your first package to get started.</p>
+            <p className="text-sm text-muted-foreground">
+              No inspections yet. Scan your first package to get started.
+            </p>
             <Button asChild className="mt-4">
               <Link to="/app/scan">Scan a package</Link>
             </Button>
@@ -107,12 +125,17 @@ function Dashboard() {
                   className="flex flex-wrap items-center gap-3 px-5 py-4 transition-colors hover:bg-muted"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{r.products?.product_name ?? "Unidentified product"}</p>
+                    <p className="truncate font-medium">
+                      {r.products?.product_name ?? "Unidentified product"}
+                    </p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {new Date(r.inspection_date).toLocaleString()} {r.location_label ? `· ${r.location_label}` : ""}
+                      {new Date(r.inspection_date).toLocaleString()}{" "}
+                      {r.location_label ? `· ${r.location_label}` : ""}
                     </p>
                   </div>
-                  <span className="font-display text-lg font-semibold">{r.compliance_score ?? "—"}</span>
+                  <span className="font-display text-lg font-semibold">
+                    {r.compliance_score ?? "—"}
+                  </span>
                   <StatusChip status={r.status} />
                 </Link>
               </li>

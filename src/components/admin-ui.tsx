@@ -43,7 +43,9 @@ export function KpiCard({
   return (
     <div className="surface-panel p-4">
       <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{label}</p>
-      <p className={cn("mt-2 font-display text-2xl font-bold tabular-nums", toneClass)}>{value ?? "—"}</p>
+      <p className={cn("mt-2 font-display text-2xl font-bold tabular-nums", toneClass)}>
+        {value ?? "—"}
+      </p>
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
@@ -60,13 +62,23 @@ export function StatusPill({ status }: { status?: string | null }) {
           ? "bg-warning/10 text-warning"
           : "bg-muted text-muted-foreground";
   return (
-    <span className={cn("inline-flex rounded-full px-2 py-0.5 text-xs font-semibold capitalize", tone)}>
+    <span
+      className={cn("inline-flex rounded-full px-2 py-0.5 text-xs font-semibold capitalize", tone)}
+    >
       {s.replace(/_/g, " ")}
     </span>
   );
 }
 
-export function Panel({ title, children, action }: { title?: string; children: ReactNode; action?: ReactNode }) {
+export function Panel({
+  title,
+  children,
+  action,
+}: {
+  title?: string;
+  children: ReactNode;
+  action?: ReactNode;
+}) {
   return (
     <section className="surface-panel overflow-hidden">
       {title ? (

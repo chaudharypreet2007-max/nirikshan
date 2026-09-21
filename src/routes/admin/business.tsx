@@ -9,7 +9,8 @@ export const Route = createFileRoute("/admin/business")({
       { title: "Business management — Nirikshan AI admin" },
       {
         name: "description",
-        content: "Register, verify and supervise manufacturers, retailers, inspection agencies and their users.",
+        content:
+          "Register, verify and supervise manufacturers, retailers, inspection agencies and their users.",
       },
       { property: "og:title", content: "Business management — Nirikshan AI admin" },
       { property: "og:description", content: "Business organisations and their user accounts." },

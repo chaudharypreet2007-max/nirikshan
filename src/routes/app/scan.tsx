@@ -34,10 +34,14 @@ export const Route = createFileRoute("/app/scan")({
       { title: "Scan a package — Nirikshan AI" },
       {
         name: "description",
-        content: "Capture or upload a packaged commodity label and run an automated Legal Metrology compliance check.",
+        content:
+          "Capture or upload a packaged commodity label and run an automated Legal Metrology compliance check.",
       },
       { property: "og:title", content: "Scan a package — Nirikshan AI" },
-      { property: "og:description", content: "AI declaration extraction and rule verification from a single label photo." },
+      {
+        property: "og:description",
+        content: "AI declaration extraction and rule verification from a single label photo.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -45,10 +49,23 @@ export const Route = createFileRoute("/app/scan")({
   component: Scan,
 });
 
-const CATEGORIES = ["Food & beverages", "Cosmetics", "Household", "Electronics", "Apparel", "Pharmaceutical", "Other"];
-const PACKAGE_TYPES = ["Retail pack", "Wholesale pack", "Multi-piece pack", "Combination pack", "E-commerce listing"];
+const CATEGORIES = [
+  "Food & beverages",
+  "Cosmetics",
+  "Household",
+  "Electronics",
+  "Apparel",
+  "Pharmaceutical",
+  "Other",
+];
+const PACKAGE_TYPES = [
+  "Retail pack",
+  "Wholesale pack",
+  "Multi-piece pack",
+  "Combination pack",
+  "E-commerce listing",
+];
 const MAX_IMAGES = 6;
-
 
 function Scan() {
   const navigate = useNavigate();
@@ -69,7 +86,6 @@ function Scan() {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
 
-
   const pick = (list: FileList | null) => {
     const picked = Array.from(list ?? []);
     if (!picked.length) return;
@@ -79,8 +95,12 @@ function Scan() {
         toast.error(`You can attach up to ${MAX_IMAGES} images per package.`);
         return prev;
       }
-      if (picked.length > room) toast.info(`Only ${room} more image(s) added — limit is ${MAX_IMAGES}.`);
-      return [...prev, ...picked.slice(0, room).map((f) => ({ file: f, preview: URL.createObjectURL(f) }))];
+      if (picked.length > room)
+        toast.info(`Only ${room} more image(s) added — limit is ${MAX_IMAGES}.`);
+      return [
+        ...prev,
+        ...picked.slice(0, room).map((f) => ({ file: f, preview: URL.createObjectURL(f) })),
+      ];
     });
   };
 
@@ -177,12 +197,14 @@ function Scan() {
           barcodeProductName: search.productName ?? null,
           barcodeManufacturer: null,
           packageContext: packageType,
-
         },
       });
 
       toast.success(`Analysis complete — score ${result.score}`);
-      navigate({ to: "/app/inspections/$inspectionId", params: { inspectionId: result.inspectionId } });
+      navigate({
+        to: "/app/inspections/$inspectionId",
+        params: { inspectionId: result.inspectionId },
+      });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Analysis failed. Please try again.");
     } finally {
@@ -195,7 +217,8 @@ function Scan() {
       <header>
         <h1 className="font-display text-2xl font-bold sm:text-3xl">Scan a package</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Photograph the declaration panel so all mandatory text is readable. Results include evidence and confidence.
+          Photograph the declaration panel so all mandatory text is readable. Results include
+          evidence and confidence.
         </p>
       </header>
 
@@ -208,15 +231,23 @@ function Scan() {
             </span>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Add front, back, side and close-up shots of the same package — more angles give a more accurate check.
+            Add front, back, side and close-up shots of the same package — more angles give a more
+            accurate check.
           </p>
 
           <div className="mt-4 overflow-hidden rounded-xl border border-dashed border-border bg-muted">
             {files.length ? (
               <div className="grid grid-cols-2 gap-2 p-2 sm:grid-cols-3">
                 {files.map((f, i) => (
-                  <div key={f.preview} className="relative overflow-hidden rounded-lg border border-border bg-background">
-                    <img src={f.preview} alt={`Package label view ${i + 1}`} className="h-28 w-full object-cover" />
+                  <div
+                    key={f.preview}
+                    className="relative overflow-hidden rounded-lg border border-border bg-background"
+                  >
+                    <img
+                      src={f.preview}
+                      alt={`Package label view ${i + 1}`}
+                      className="h-28 w-full object-cover"
+                    />
                     <span className="absolute left-1 top-1 rounded bg-background/85 px-1.5 py-0.5 text-[10px] font-medium">
                       {i + 1}
                     </span>
@@ -288,17 +319,31 @@ function Scan() {
 
           <div className="space-y-1.5">
             <Label htmlFor="pname">Product name (optional)</Label>
-            <Input id="pname" className="h-11" value={productName} onChange={(e) => setProductName(e.target.value)} />
+            <Input
+              id="pname"
+              className="h-11"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="brand">Brand (optional)</Label>
-            <Input id="brand" className="h-11" value={brand} onChange={(e) => setBrand(e.target.value)} />
+            <Input
+              id="brand"
+              className="h-11"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+            />
           </div>
-
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Picker label="Category" value={category} onChange={setCategory} options={CATEGORIES} />
-            <Picker label="Package type" value={packageType} onChange={setPackageType} options={PACKAGE_TYPES} />
+            <Picker
+              label="Package type"
+              value={packageType}
+              onChange={setPackageType}
+              options={PACKAGE_TYPES}
+            />
           </div>
 
           <Picker
@@ -319,13 +364,26 @@ function Scan() {
                 value={locationLabel}
                 onChange={(e) => setLocationLabel(e.target.value)}
               />
-              <Button type="button" variant="outline" className="h-11 shrink-0" disabled={locating} onClick={captureLocation}>
-                {locating ? <Loader2 className="size-4 animate-spin" /> : <MapPin className="size-4" />} GPS
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 shrink-0"
+                disabled={locating}
+                onClick={captureLocation}
+              >
+                {locating ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <MapPin className="size-4" />
+                )}{" "}
+                GPS
               </Button>
             </div>
             {coords ? (
               <p className="text-xs text-muted-foreground">
-                {locationLabel ? <span className="font-medium text-foreground">{locationLabel} · </span> : null}
+                {locationLabel ? (
+                  <span className="font-medium text-foreground">{locationLabel} · </span>
+                ) : null}
                 {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
               </p>
             ) : null}
@@ -334,7 +392,8 @@ function Scan() {
           <Button type="submit" className="h-12 w-full" disabled={busy}>
             {busy ? (
               <>
-                <Loader2 className="size-4 animate-spin" /> Analysing {files.length} image{files.length > 1 ? "s" : ""}…
+                <Loader2 className="size-4 animate-spin" /> Analysing {files.length} image
+                {files.length > 1 ? "s" : ""}…
               </>
             ) : (
               "Run compliance check"

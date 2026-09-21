@@ -3,20 +3,44 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
-import { adminListOrganizations, adminUpsertOrganization, adminListUsers, adminUpdateUser } from "@/lib/admin.functions";
+import {
+  adminListOrganizations,
+  adminUpsertOrganization,
+  adminListUsers,
+  adminUpdateUser,
+} from "@/lib/admin.functions";
 import { Panel, EmptyRow, StatusPill } from "@/components/admin-ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Scope = "government" | "business";
 type OrgType = "government" | "private" | "manufacturer" | "retailer" | "inspection_agency";
 
 const GOV_TYPES: OrgType[] = ["government"];
 const BIZ_TYPES: OrgType[] = ["manufacturer", "retailer", "inspection_agency", "private"];
-const STATUSES = ["active", "pending_verification", "verified", "suspended", "deactivated"] as const;
+const STATUSES = [
+  "active",
+  "pending_verification",
+  "verified",
+  "suspended",
+  "deactivated",
+] as const;
 
 export function OrganisationManager({ scope }: { scope: Scope }) {
   const qc = useQueryClient();
@@ -97,7 +121,9 @@ export function OrganisationManager({ scope }: { scope: Scope }) {
                       {o.organization_type.replace(/_/g, " ")}
                     </td>
                     <td className="px-5 py-3 text-muted-foreground">{o.jurisdiction ?? "—"}</td>
-                    <td className="px-5 py-3 text-muted-foreground">{o.registration_number ?? "—"}</td>
+                    <td className="px-5 py-3 text-muted-foreground">
+                      {o.registration_number ?? "—"}
+                    </td>
                     <td className="px-5 py-3 tabular-nums">{o.user_count}</td>
                     <td className="px-5 py-3 tabular-nums">{o.inspection_count}</td>
                     <td className="px-5 py-3">
@@ -203,7 +229,9 @@ function OrgForm({
   }) => void;
 }) {
   const [name, setName] = useState(initial?.name ?? "");
-  const [organizationType, setOrganizationType] = useState<OrgType>(initial?.organizationType ?? types[0]!);
+  const [organizationType, setOrganizationType] = useState<OrgType>(
+    initial?.organizationType ?? types[0]!,
+  );
   const [jurisdiction, setJurisdiction] = useState(initial?.jurisdiction ?? "");
   const [registrationNumber, setRegistrationNumber] = useState(initial?.registrationNumber ?? "");
   const [status, setStatus] = useState<string>(initial?.status ?? "active");
@@ -243,11 +271,19 @@ function OrgForm({
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="org-jur">Jurisdiction</Label>
-        <Input id="org-jur" value={jurisdiction} onChange={(e) => setJurisdiction(e.target.value)} />
+        <Input
+          id="org-jur"
+          value={jurisdiction}
+          onChange={(e) => setJurisdiction(e.target.value)}
+        />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="org-reg">Registration number</Label>
-        <Input id="org-reg" value={registrationNumber} onChange={(e) => setRegistrationNumber(e.target.value)} />
+        <Input
+          id="org-reg"
+          value={registrationNumber}
+          onChange={(e) => setRegistrationNumber(e.target.value)}
+        />
       </div>
       <div className="space-y-1.5">
         <Label>Status</Label>

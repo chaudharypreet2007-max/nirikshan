@@ -2,8 +2,6 @@
 
 Implement exactly the screenshot and nothing else
 
-
-
 **Live app**: https://nirikshan.lovable.app
 
 Continue developing this project in the (https://lovable.dev/projects/abda3d8e-2158-4536-8385-5755f5fd7ff2).

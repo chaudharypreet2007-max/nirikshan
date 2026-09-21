@@ -8,9 +8,15 @@ export const Route = createFileRoute("/app/reviews/")({
   head: () => ({
     meta: [
       { title: "Supervisor review queue — Nirikshan AI" },
-      { name: "description", content: "Inspections submitted by field officers awaiting supervisor decision." },
+      {
+        name: "description",
+        content: "Inspections submitted by field officers awaiting supervisor decision.",
+      },
       { property: "og:title", content: "Supervisor review queue — Nirikshan AI" },
-      { property: "og:description", content: "Approve, reject, escalate or request more evidence on submitted inspections." },
+      {
+        property: "og:description",
+        content: "Approve, reject, escalate or request more evidence on submitted inspections.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -52,7 +58,11 @@ function ReviewQueue() {
     reason: string;
     status: string;
     submitted_at: string;
-    inspections: { compliance_score: number | null; barcode: string | null; products: { product_name: string } | null } | null;
+    inspections: {
+      compliance_score: number | null;
+      barcode: string | null;
+      products: { product_name: string } | null;
+    } | null;
     profiles: { full_name: string | null } | null;
   }[];
 
@@ -64,7 +74,8 @@ function ReviewQueue() {
       <header>
         <h1 className="font-display text-2xl font-bold sm:text-3xl">Supervisor review</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Only the specific inspections submitted for review are shared — never an officer&apos;s full history.
+          Only the specific inspections submitted for review are shared — never an officer&apos;s
+          full history.
         </p>
       </header>
 
@@ -72,8 +83,16 @@ function ReviewQueue() {
         <p className="text-sm text-muted-foreground">Loading review queue…</p>
       ) : (
         <>
-          <Section title={`Review queue (${incoming.length})`} rows={incoming} empty="No inspections are awaiting your decision." />
-          <Section title={`My review requests (${mine.length})`} rows={mine} empty="You have not submitted any inspection for review." />
+          <Section
+            title={`Review queue (${incoming.length})`}
+            rows={incoming}
+            empty="No inspections are awaiting your decision."
+          />
+          <Section
+            title={`My review requests (${mine.length})`}
+            rows={mine}
+            empty="You have not submitted any inspection for review."
+          />
         </>
       )}
     </div>
@@ -93,7 +112,11 @@ function Section({
     reason: string;
     status: string;
     submitted_at: string;
-    inspections: { compliance_score: number | null; barcode: string | null; products: { product_name: string } | null } | null;
+    inspections: {
+      compliance_score: number | null;
+      barcode: string | null;
+      products: { product_name: string } | null;
+    } | null;
     profiles: { full_name: string | null } | null;
   }[];
 }) {
@@ -124,7 +147,9 @@ function Section({
                     {r.inspections?.barcode ? ` · ${r.inspections.barcode}` : ""}
                   </p>
                 </div>
-                <span className="font-display text-lg font-semibold">{r.inspections?.compliance_score ?? "—"}</span>
+                <span className="font-display text-lg font-semibold">
+                  {r.inspections?.compliance_score ?? "—"}
+                </span>
                 <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-muted-foreground">
                   {STATE_LABEL[r.status] ?? r.status}
                 </span>

@@ -3,12 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export type AdminRole =
-  | "main_admin"
-  | "super_admin"
-  | "gov_admin"
-  | "inspector"
-  | "org_admin"
-  | "org_user";
+  "main_admin" | "super_admin" | "gov_admin" | "inspector" | "org_admin" | "org_user";
 
 type Ctx = { supabase: any; userId: string };
 
@@ -82,9 +77,11 @@ export const adminListUsers = createServerFn({ method: "POST" })
           .some((v) => String(v).toLowerCase().includes(q)),
       );
     }
-    if (data.portal && data.portal !== "all") list = list.filter((u) => u.portal_type === data.portal);
+    if (data.portal && data.portal !== "all")
+      list = list.filter((u) => u.portal_type === data.portal);
     if (data.role && data.role !== "all") list = list.filter((u) => u.roles.includes(data.role!));
-    if (data.status && data.status !== "all") list = list.filter((u) => u.account_status === data.status);
+    if (data.status && data.status !== "all")
+      list = list.filter((u) => u.account_status === data.status);
 
     await audit(actor, "admin_users_viewed", { count: list.length });
     return list;
@@ -118,23 +115,25 @@ export const adminCreateUser = createServerFn({ method: "POST" })
     if (error || !created.user) throw new Error(error?.message ?? "Could not create the account");
 
     const userId = created.user.id;
-    await db
-      .from("profiles")
-      .upsert({
-        id: userId,
-        full_name: data.fullName,
-        email: data.email,
-        portal_type: data.portalType,
-        organization_id: data.organizationId ?? null,
-        jurisdiction: data.jurisdiction ?? null,
-        official_id: data.officialId ?? null,
-        designation: data.designation ?? null,
-        account_status: "active",
-      });
+    await db.from("profiles").upsert({
+      id: userId,
+      full_name: data.fullName,
+      email: data.email,
+      portal_type: data.portalType,
+      organization_id: data.organizationId ?? null,
+      jurisdiction: data.jurisdiction ?? null,
+      official_id: data.officialId ?? null,
+      designation: data.designation ?? null,
+      account_status: "active",
+    });
     await db.from("user_roles").delete().eq("user_id", userId);
     await db.from("user_roles").insert({ user_id: userId, role: data.role });
 
-    await audit(actor, "admin_user_created", { user_id: userId, role: data.role, portal: data.portalType });
+    await audit(actor, "admin_user_created", {
+      user_id: userId,
+      role: data.role,
+      portal: data.portalType,
+    });
     return { id: userId };
   });
 
@@ -147,7 +146,9 @@ const UpdateInput = z.object({
   officialId: z.string().nullable().optional(),
   designation: z.string().nullable().optional(),
   portalType: z.enum(["government", "private", "admin"]).optional(),
-  role: z.enum(["main_admin", "super_admin", "gov_admin", "inspector", "org_admin", "org_user"]).optional(),
+  role: z
+    .enum(["main_admin", "super_admin", "gov_admin", "inspector", "org_admin", "org_user"])
+    .optional(),
 });
 
 export const adminUpdateUser = createServerFn({ method: "POST" })
@@ -167,13 +168,18 @@ export const adminUpdateUser = createServerFn({ method: "POST" })
     if (data.portalType !== undefined) patch["portal_type"] = data.portalType;
 
     if (Object.keys(patch).length) {
-      const { error } = await db.from("profiles").update(patch as never).eq("id", data.userId);
+      const { error } = await db
+        .from("profiles")
+        .update(patch as never)
+        .eq("id", data.userId);
       if (error) throw new Error(error.message);
     }
 
     if (data.role) {
       await db.from("user_roles").delete().eq("user_id", data.userId);
-      const { error } = await db.from("user_roles").insert({ user_id: data.userId, role: data.role });
+      const { error } = await db
+        .from("user_roles")
+        .insert({ user_id: data.userId, role: data.role });
       if (error) throw new Error(error.message);
     }
 
@@ -183,7 +189,11 @@ export const adminUpdateUser = createServerFn({ method: "POST" })
       });
     }
 
-    await audit(actor, "admin_user_updated", { user_id: data.userId, ...patch, role: data.role ?? null });
+    await audit(actor, "admin_user_updated", {
+      user_id: data.userId,
+      ...patch,
+      role: data.role ?? null,
+    });
     return { ok: true };
   });
 
@@ -211,9 +221,13 @@ export const adminListOrganizations = createServerFn({ method: "POST" })
     const [{ data: orgs, error }, { data: profiles }, { data: inspections }] = await Promise.all([
       db
         .from("organizations")
-        .select("id, name, organization_type, jurisdiction, registration_number, status, verified_at, created_at")
+        .select(
+          "id, name, organization_type, jurisdiction, registration_number, status, verified_at, created_at",
+        )
         .order("created_at", { ascending: false }),
-      db.from("profiles").select("id, organization_id, full_name, email, portal_type, account_status"),
+      db
+        .from("profiles")
+        .select("id, organization_id, full_name, email, portal_type, account_status"),
       db.from("inspections").select("id, organization_id").is("deleted_at", null),
     ]);
     if (error) throw new Error(error.message);
@@ -224,7 +238,8 @@ export const adminListOrganizations = createServerFn({ method: "POST" })
       inspection_count: (inspections ?? []).filter((i) => i.organization_id === o.id).length,
     }));
 
-    if (data.scope === "government") list = list.filter((o) => o.organization_type === "government");
+    if (data.scope === "government")
+      list = list.filter((o) => o.organization_type === "government");
     if (data.scope === "business") list = list.filter((o) => o.organization_type !== "government");
 
     const q = data.search?.trim().toLowerCase();
@@ -241,10 +256,18 @@ export const adminListOrganizations = createServerFn({ method: "POST" })
 const OrgInput = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1),
-  organizationType: z.enum(["government", "private", "manufacturer", "retailer", "inspection_agency"]),
+  organizationType: z.enum([
+    "government",
+    "private",
+    "manufacturer",
+    "retailer",
+    "inspection_agency",
+  ]),
   jurisdiction: z.string().nullable().optional(),
   registrationNumber: z.string().nullable().optional(),
-  status: z.enum(["active", "pending_verification", "verified", "suspended", "deactivated"]).optional(),
+  status: z
+    .enum(["active", "pending_verification", "verified", "suspended", "deactivated"])
+    .optional(),
 });
 
 export const adminUpsertOrganization = createServerFn({ method: "POST" })
@@ -269,7 +292,11 @@ export const adminUpsertOrganization = createServerFn({ method: "POST" })
       await audit(actor, "admin_organization_updated", { organization_id: data.id, ...row });
       return { id: data.id };
     }
-    const { data: created, error } = await db.from("organizations").insert(row).select("id").single();
+    const { data: created, error } = await db
+      .from("organizations")
+      .insert(row)
+      .select("id")
+      .single();
     if (error) throw new Error(error.message);
     await audit(actor, "admin_organization_created", { organization_id: created.id, ...row });
     return { id: created.id };
@@ -320,7 +347,8 @@ export const adminListProducts = createServerFn({ method: "POST" })
           .some((v) => String(v).toLowerCase().includes(q)),
       );
     }
-    if (data.status && data.status !== "all") list = list.filter((p) => p.inspection_status === data.status);
+    if (data.status && data.status !== "all")
+      list = list.filter((p) => p.inspection_status === data.status);
     return list;
   });
 
@@ -329,7 +357,14 @@ export const adminListProducts = createServerFn({ method: "POST" })
 export const adminListInspections = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator(
-    (i: { search?: string; portal?: string; status?: string; from?: string; to?: string; risk?: string }) => i,
+    (i: {
+      search?: string;
+      portal?: string;
+      status?: string;
+      from?: string;
+      to?: string;
+      risk?: string;
+    }) => i,
   )
   .handler(async ({ data, context }) => {
     const actor = await assertMainAdmin(context as Ctx);
@@ -347,14 +382,19 @@ export const adminListInspections = createServerFn({ method: "POST" })
     if (data.to) query = query.lte("inspection_date", data.to);
     if (data.status && data.status !== "all") query = query.eq("status", data.status as never);
 
-    const [{ data: rows, error }, { data: profiles }, { data: orgs }, { data: products }, { data: violations }] =
-      await Promise.all([
-        query,
-        db.from("profiles").select("id, full_name, email, portal_type"),
-        db.from("organizations").select("id, name, organization_type"),
-        db.from("products").select("id, product_name, brand"),
-        db.from("violations").select("inspection_id, severity, status"),
-      ]);
+    const [
+      { data: rows, error },
+      { data: profiles },
+      { data: orgs },
+      { data: products },
+      { data: violations },
+    ] = await Promise.all([
+      query,
+      db.from("profiles").select("id, full_name, email, portal_type"),
+      db.from("organizations").select("id, name, organization_type"),
+      db.from("products").select("id, product_name, brand"),
+      db.from("violations").select("inspection_id, severity, status"),
+    ]);
     if (error) throw new Error(error.message);
 
     const pBy = new Map((profiles ?? []).map((p) => [p.id, p]));
@@ -375,7 +415,8 @@ export const adminListInspections = createServerFn({ method: "POST" })
       };
     });
 
-    if (data.portal && data.portal !== "all") list = list.filter((r) => r.inspector_portal === data.portal);
+    if (data.portal && data.portal !== "all")
+      list = list.filter((r) => r.inspector_portal === data.portal);
     if (data.risk && data.risk !== "all") list = list.filter((r) => r.risk === data.risk);
 
     const q = data.search?.trim().toLowerCase();
@@ -442,7 +483,11 @@ export const adminUpsertRule = createServerFn({ method: "POST" })
       await audit(actor, "admin_rule_updated", { rule_id: data.id, code: data.ruleCode });
       return { id: data.id };
     }
-    const { data: created, error } = await db.from("compliance_rules").insert(row).select("id").single();
+    const { data: created, error } = await db
+      .from("compliance_rules")
+      .insert(row)
+      .select("id")
+      .single();
     if (error) throw new Error(error.message);
     await audit(actor, "admin_rule_created", { rule_id: created.id, code: data.ruleCode });
     return { id: created.id };
@@ -456,13 +501,19 @@ export const adminListAudit = createServerFn({ method: "POST" })
     await assertMainAdmin(context as Ctx);
     const db = await admin();
     const [{ data, error }, { data: profiles }] = await Promise.all([
-      db.from("audit_logs").select("id, user_id, action, inspection_id, metadata, created_at").order("created_at", { ascending: false }).limit(100),
+      db
+        .from("audit_logs")
+        .select("id, user_id, action, inspection_id, metadata, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100),
       db.from("profiles").select("id, full_name, email"),
     ]);
     if (error) throw new Error(error.message);
     const pBy = new Map((profiles ?? []).map((p) => [p.id, p]));
     return (data ?? []).map((row) => ({
       ...row,
-      actor: row.user_id ? (pBy.get(row.user_id)?.full_name ?? pBy.get(row.user_id)?.email ?? "—") : "System",
+      actor: row.user_id
+        ? (pBy.get(row.user_id)?.full_name ?? pBy.get(row.user_id)?.email ?? "—")
+        : "System",
     }));
   });

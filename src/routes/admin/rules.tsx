@@ -11,16 +11,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/rules")({
   head: () => ({
     meta: [
       { title: "Legal Metrology rules — Nirikshan AI admin" },
-      { name: "description", content: "Configure the Legal Metrology rule engine used to evaluate every inspection." },
+      {
+        name: "description",
+        content: "Configure the Legal Metrology rule engine used to evaluate every inspection.",
+      },
       { property: "og:title", content: "Legal Metrology rules — Nirikshan AI admin" },
-      { property: "og:description", content: "Add, edit and enable the compliance rules applied platform-wide." },
+      {
+        property: "og:description",
+        content: "Add, edit and enable the compliance rules applied platform-wide.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -212,29 +231,58 @@ function RuleForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="r-code">Rule code</Label>
-          <Input id="r-code" value={ruleCode} required onChange={(e) => setRuleCode(e.target.value)} />
+          <Input
+            id="r-code"
+            value={ruleCode}
+            required
+            onChange={(e) => setRuleCode(e.target.value)}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="r-date">Effective date</Label>
-          <Input id="r-date" type="date" value={effectiveDate} onChange={(e) => setEffectiveDate(e.target.value)} />
+          <Input
+            id="r-date"
+            type="date"
+            value={effectiveDate}
+            onChange={(e) => setEffectiveDate(e.target.value)}
+          />
         </div>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="r-name">Rule name</Label>
-        <Input id="r-name" value={ruleName} required onChange={(e) => setRuleName(e.target.value)} />
+        <Input
+          id="r-name"
+          value={ruleName}
+          required
+          onChange={(e) => setRuleName(e.target.value)}
+        />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="r-desc">Description</Label>
-        <Textarea id="r-desc" value={description} rows={3} onChange={(e) => setDescription(e.target.value)} />
+        <Textarea
+          id="r-desc"
+          value={description}
+          rows={3}
+          onChange={(e) => setDescription(e.target.value)}
+        />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="r-pkg">Applicable package type</Label>
-          <Input id="r-pkg" value={packageType} required onChange={(e) => setPackageType(e.target.value)} />
+          <Input
+            id="r-pkg"
+            value={packageType}
+            required
+            onChange={(e) => setPackageType(e.target.value)}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="r-decl">Declaration key</Label>
-          <Input id="r-decl" value={declarationKey} onChange={(e) => setDeclarationKey(e.target.value)} />
+          <Input
+            id="r-decl"
+            value={declarationKey}
+            onChange={(e) => setDeclarationKey(e.target.value)}
+          />
         </div>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">

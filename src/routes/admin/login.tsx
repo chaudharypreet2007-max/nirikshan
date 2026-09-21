@@ -19,7 +19,10 @@ export const Route = createFileRoute("/admin/login")({
           "Secure sign-in for Nirikshan AI head administrators overseeing the government enforcement and business compliance portals.",
       },
       { property: "og:title", content: "Main Administration Portal — Nirikshan AI" },
-      { property: "og:description", content: "Highest-level administration for the Nirikshan AI platform." },
+      {
+        property: "og:description",
+        content: "Highest-level administration for the Nirikshan AI platform.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -38,7 +41,10 @@ function AdminLogin() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
     if (error || !data.user) {
       setBusy(false);
       toast.error(error?.message ?? "Invalid credentials");
@@ -93,8 +99,9 @@ function AdminLogin() {
           </span>
           <h1 className="mt-6 font-display text-3xl font-bold">Main Administration Portal</h1>
           <p className="mt-3 max-w-md text-muted-foreground">
-            Highest-level oversight of the Nirikshan AI platform — government enforcement, business compliance and
-            system management. Every administrative action is recorded in the audit trail.
+            Highest-level oversight of the Nirikshan AI platform — government enforcement, business
+            compliance and system management. Every administrative action is recorded in the audit
+            trail.
           </p>
           <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
             {[
@@ -103,7 +110,10 @@ function AdminLogin() {
               "Legal Metrology rule engine configuration",
             ].map((item) => (
               <li key={item} className="flex gap-2">
-                <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                <span
+                  className="mt-2 size-1.5 shrink-0 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
                 {item}
               </li>
             ))}
@@ -161,7 +171,11 @@ function AdminLogin() {
                 <Checkbox checked={remember} onCheckedChange={(v) => setRemember(Boolean(v))} />
                 Keep me signed in
               </label>
-              <button type="button" className="text-sm font-semibold text-primary hover:underline" onClick={forgot}>
+              <button
+                type="button"
+                className="text-sm font-semibold text-primary hover:underline"
+                onClick={forgot}
+              >
                 Forgot password?
               </button>
             </div>

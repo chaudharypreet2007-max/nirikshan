@@ -15,7 +15,9 @@ export function Wordmark({
       <span
         className={cn(
           "flex size-10 shrink-0 items-center justify-center rounded-xl",
-          tone === "invert" ? "bg-sidebar-primary text-sidebar-primary-foreground" : "brand-gradient text-primary-foreground",
+          tone === "invert"
+            ? "bg-sidebar-primary text-sidebar-primary-foreground"
+            : "brand-gradient text-primary-foreground",
         )}
       >
         <ScanLine className="size-5" aria-hidden="true" />

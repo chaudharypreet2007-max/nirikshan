@@ -5,7 +5,12 @@ import { toast } from "sonner";
 import { ArrowLeft, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { StatusChip, SeverityChip, DECLARATION_LABELS, type ComplianceStatus } from "@/components/compliance";
+import {
+  StatusChip,
+  SeverityChip,
+  DECLARATION_LABELS,
+  type ComplianceStatus,
+} from "@/components/compliance";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,9 +20,16 @@ export const Route = createFileRoute("/app/reviews/$reviewId")({
   head: () => ({
     meta: [
       { title: "Review inspection — Nirikshan AI" },
-      { name: "description", content: "Supervisor review screen with evidence, declarations, violations and decision actions." },
+      {
+        name: "description",
+        content:
+          "Supervisor review screen with evidence, declarations, violations and decision actions.",
+      },
       { property: "og:title", content: "Review inspection — Nirikshan AI" },
-      { property: "og:description", content: "Approve, reject, escalate or request more evidence for a submitted inspection." },
+      {
+        property: "og:description",
+        content: "Approve, reject, escalate or request more evidence for a submitted inspection.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -75,7 +87,11 @@ function ReviewScreen() {
           ? [data.inspection.image_path as string]
           : [];
       const urls = await Promise.all(
-        paths.map(async (p) => (await supabase.storage.from("label-images").createSignedUrl(p, 3600)).data?.signedUrl ?? null),
+        paths.map(
+          async (p) =>
+            (await supabase.storage.from("label-images").createSignedUrl(p, 3600)).data
+              ?.signedUrl ?? null,
+        ),
       );
       return urls.filter((u): u is string => !!u);
     },
@@ -104,48 +120,50 @@ function ReviewScreen() {
     decision: string | null;
     reviewer_notes: string | null;
     submitted_at: string;
-    profiles: { full_name: string | null; official_id: string | null; jurisdiction: string | null } | null;
+    profiles: {
+      full_name: string | null;
+      official_id: string | null;
+      jurisdiction: string | null;
+    } | null;
   };
-  const inspection = data.inspection as unknown as
-    | {
-        id: string;
-        compliance_score: number | null;
-        status: ComplianceStatus;
-        workflow_status: string;
-        inspection_date: string;
-        location_label: string | null;
-        latitude: number | null;
-        longitude: number | null;
-        barcode: string | null;
-        barcode_source: string | null;
-        package_context: string | null;
-        product_match_score: number | null;
-        summary: string | null;
-        products: {
-          product_name: string;
-          brand: string | null;
-          manufacturer: string | null;
-          product_category: string | null;
-          package_type: string | null;
-        } | null;
-        extracted_declarations: {
-          id: string;
-          declaration_type: string;
-          raw_text: string | null;
-          normalized_value: string | null;
-          validation_status: string;
-          confidence_score: number | null;
-        }[];
-        violations: {
-          id: string;
-          rule_code: string | null;
-          violation_type: string;
-          description: string | null;
-          evidence: string | null;
-          severity: "low" | "medium" | "high" | "critical";
-        }[];
-      }
-    | null;
+  const inspection = data.inspection as unknown as {
+    id: string;
+    compliance_score: number | null;
+    status: ComplianceStatus;
+    workflow_status: string;
+    inspection_date: string;
+    location_label: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    barcode: string | null;
+    barcode_source: string | null;
+    package_context: string | null;
+    product_match_score: number | null;
+    summary: string | null;
+    products: {
+      product_name: string;
+      brand: string | null;
+      manufacturer: string | null;
+      product_category: string | null;
+      package_type: string | null;
+    } | null;
+    extracted_declarations: {
+      id: string;
+      declaration_type: string;
+      raw_text: string | null;
+      normalized_value: string | null;
+      validation_status: string;
+      confidence_score: number | null;
+    }[];
+    violations: {
+      id: string;
+      rule_code: string | null;
+      violation_type: string;
+      description: string | null;
+      evidence: string | null;
+      severity: "low" | "medium" | "high" | "critical";
+    }[];
+  } | null;
 
   const isSubmitter = review.submitted_by === profile?.id;
   const canDecide = !isSubmitter;
@@ -207,7 +225,10 @@ function ReviewScreen() {
           </span>
         </div>
         <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-3">
-          <Field label="Compliance score" value={inspection?.compliance_score != null ? `${inspection.compliance_score}%` : "—"} />
+          <Field
+            label="Compliance score"
+            value={inspection?.compliance_score != null ? `${inspection.compliance_score}%` : "—"}
+          />
           <Field label="Reason for review" value={review.reason} />
           <Field label="Officer" value={review.profiles?.full_name ?? "Officer"} />
           <Field label="Official ID" value={review.profiles?.official_id} />
@@ -217,7 +238,11 @@ function ReviewScreen() {
           <Field label="Barcode source" value={inspection?.barcode_source} />
           <Field
             label="Product identity match"
-            value={inspection?.product_match_score != null ? `${Math.round(Number(inspection.product_match_score))}%` : "—"}
+            value={
+              inspection?.product_match_score != null
+                ? `${Math.round(Number(inspection.product_match_score))}%`
+                : "—"
+            }
           />
           <Field label="Package context" value={inspection?.package_context} />
           <Field
@@ -229,10 +254,15 @@ function ReviewScreen() {
                 : "Not recorded")
             }
           />
-          <Field label="Inspected at" value={inspection ? new Date(inspection.inspection_date).toLocaleString() : "—"} />
+          <Field
+            label="Inspected at"
+            value={inspection ? new Date(inspection.inspection_date).toLocaleString() : "—"}
+          />
         </dl>
         {review.notes ? (
-          <p className="mt-4 rounded-lg bg-muted px-4 py-3 text-sm">Inspector notes: {review.notes}</p>
+          <p className="mt-4 rounded-lg bg-muted px-4 py-3 text-sm">
+            Inspector notes: {review.notes}
+          </p>
         ) : null}
         {review.reviewer_notes ? (
           <p className="mt-2 rounded-lg bg-accent px-4 py-3 text-sm text-accent-foreground">
@@ -251,15 +281,25 @@ function ReviewScreen() {
           ) : null}
 
           <section className="surface-panel overflow-hidden">
-            <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">Declarations</h2>
+            <h2 className="border-b border-border px-5 py-4 font-display text-base font-semibold">
+              Declarations
+            </h2>
             <ul className="divide-y divide-border text-sm">
               {(inspection?.extracted_declarations ?? []).map((d) => (
                 <li key={d.id} className="flex flex-wrap items-center gap-2 px-5 py-3">
-                  <span className="flex-1 font-medium">{DECLARATION_LABELS[d.declaration_type] ?? d.declaration_type}</span>
-                  <span className="text-muted-foreground">{d.normalized_value || d.raw_text || "Not detected"}</span>
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{d.validation_status}</span>
+                  <span className="flex-1 font-medium">
+                    {DECLARATION_LABELS[d.declaration_type] ?? d.declaration_type}
+                  </span>
+                  <span className="text-muted-foreground">
+                    {d.normalized_value || d.raw_text || "Not detected"}
+                  </span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-xs">
+                    {d.validation_status}
+                  </span>
                   {d.confidence_score != null ? (
-                    <span className="text-xs text-muted-foreground">{Math.round(Number(d.confidence_score) * 100)}%</span>
+                    <span className="text-xs text-muted-foreground">
+                      {Math.round(Number(d.confidence_score) * 100)}%
+                    </span>
                   ) : null}
                 </li>
               ))}
@@ -276,12 +316,18 @@ function ReviewScreen() {
                   <div className="flex flex-wrap items-center gap-2">
                     <SeverityChip severity={v.severity} />
                     {v.rule_code ? (
-                      <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">{v.rule_code}</span>
+                      <span className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">
+                        {v.rule_code}
+                      </span>
                     ) : null}
                   </div>
                   <p className="mt-2 font-medium">{v.violation_type}</p>
-                  {v.description ? <p className="mt-1 text-sm text-muted-foreground">{v.description}</p> : null}
-                  {v.evidence ? <p className="mt-1 text-xs text-muted-foreground">Evidence: {v.evidence}</p> : null}
+                  {v.description ? (
+                    <p className="mt-1 text-sm text-muted-foreground">{v.description}</p>
+                  ) : null}
+                  {v.evidence ? (
+                    <p className="mt-1 text-xs text-muted-foreground">Evidence: {v.evidence}</p>
+                  ) : null}
                 </li>
               ))}
               {(inspection?.violations.length ?? 0) === 0 ? (
@@ -295,7 +341,12 @@ function ReviewScreen() {
               <h2 className="font-display text-base font-semibold">Decision</h2>
               <div className="space-y-1.5">
                 <Label htmlFor="rnotes">Supervisor notes</Label>
-                <Textarea id="rnotes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+                <Textarea
+                  id="rnotes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                />
               </div>
 
               <div>
@@ -316,17 +367,36 @@ function ReviewScreen() {
               </div>
 
               <div className="grid gap-2 sm:grid-cols-2">
-                <Button disabled={busy} onClick={() => decide("approved", "approved")}>Approve</Button>
-                <Button disabled={busy} variant="destructive" onClick={() => decide("rejected", "rejected")}>
+                <Button disabled={busy} onClick={() => decide("approved", "approved")}>
+                  Approve
+                </Button>
+                <Button
+                  disabled={busy}
+                  variant="destructive"
+                  onClick={() => decide("rejected", "rejected")}
+                >
                   Reject
                 </Button>
-                <Button disabled={busy} variant="outline" onClick={() => decide("more_evidence_required", "more_evidence_required")}>
+                <Button
+                  disabled={busy}
+                  variant="outline"
+                  onClick={() => decide("more_evidence_required", "more_evidence_required")}
+                >
                   Request more evidence
                 </Button>
-                <Button disabled={busy} variant="outline" onClick={() => decide("under_review", "sent_back_to_officer")}>
+                <Button
+                  disabled={busy}
+                  variant="outline"
+                  onClick={() => decide("under_review", "sent_back_to_officer")}
+                >
                   Send back to officer
                 </Button>
-                <Button disabled={busy} variant="secondary" className="sm:col-span-2" onClick={() => decide("escalated", "escalated")}>
+                <Button
+                  disabled={busy}
+                  variant="secondary"
+                  className="sm:col-span-2"
+                  onClick={() => decide("escalated", "escalated")}
+                >
                   Escalate to senior authority
                 </Button>
               </div>
@@ -349,7 +419,11 @@ function ReviewScreen() {
                   <span className="absolute left-2 top-2 rounded-md bg-background/80 px-2 py-0.5 text-xs font-semibold">
                     {i + 1}
                   </span>
-                  <img src={url} alt={`Submitted package evidence ${i + 1}`} className="w-full object-contain" />
+                  <img
+                    src={url}
+                    alt={`Submitted package evidence ${i + 1}`}
+                    className="w-full object-contain"
+                  />
                 </li>
               ))}
             </ul>

@@ -5,15 +5,27 @@ import { useServerFn } from "@tanstack/react-start";
 import { adminListProducts } from "@/lib/admin.functions";
 import { PageHeader, Panel, EmptyRow, StatusPill } from "@/components/admin-ui";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/admin/products")({
   head: () => ({
     meta: [
       { title: "Product management — Nirikshan AI admin" },
-      { name: "description", content: "The full Nirikshan AI product repository with inspection and risk history." },
+      {
+        name: "description",
+        content: "The full Nirikshan AI product repository with inspection and risk history.",
+      },
       { property: "og:title", content: "Product management — Nirikshan AI admin" },
-      { property: "og:description", content: "Search, filter and review every registered packaged commodity." },
+      {
+        property: "og:description",
+        content: "Search, filter and review every registered packaged commodity.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -46,7 +58,11 @@ function ProductsPage() {
       />
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <Input placeholder="Search product, brand, barcode…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <Input
+          placeholder="Search product, brand, barcode…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger>
             <SelectValue />
@@ -98,7 +114,9 @@ function ProductsPage() {
                       <p className="font-medium">{p.product_name}</p>
                       <p className="text-xs text-muted-foreground">{p.brand ?? "—"}</p>
                     </td>
-                    <td className="px-5 py-3 font-mono text-xs text-muted-foreground">{p.barcode ?? "—"}</td>
+                    <td className="px-5 py-3 font-mono text-xs text-muted-foreground">
+                      {p.barcode ?? "—"}
+                    </td>
                     <td className="px-5 py-3 text-muted-foreground">{p.manufacturer ?? "—"}</td>
                     <td className="px-5 py-3 text-muted-foreground">{p.product_category ?? "—"}</td>
                     <td className="px-5 py-3 text-muted-foreground">{p.package_type ?? "—"}</td>
