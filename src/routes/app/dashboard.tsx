@@ -74,10 +74,16 @@ function Dashboard() {
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat label="My total scans" value={total} icon={ClipboardList} />
-        <Stat label="Compliance rate" value={`${rate}%`} icon={Activity} />
-        <Stat label={isGovernment ? "Non-compliant" : "Blocking issues"} value={nonCompliant} icon={ShieldAlert} tone="violation" />
-        <Stat label="Pending review" value={review} icon={ShieldAlert} tone="review" />
+        <Stat label="My total scans" value={total} icon={ClipboardList} to="/app/inspections" />
+        <Stat label="Compliance rate" value={`${rate}%`} icon={Activity} to="/app/inspections" />
+        <Stat
+          label={isGovernment ? "Non-compliant" : "Blocking issues"}
+          value={nonCompliant}
+          icon={ShieldAlert}
+          tone="violation"
+          to="/app/inspections"
+        />
+        <Stat label="Pending review" value={review} icon={ShieldAlert} tone="review" to="/app/reviews" />
       </section>
 
       <section className="surface-panel overflow-hidden">
@@ -129,11 +135,13 @@ function Stat({
   value,
   icon: Icon,
   tone = "default",
+  to,
 }: {
   label: string;
   value: string | number;
   icon: typeof Activity;
   tone?: "default" | "violation" | "review";
+  to?: string;
 }) {
   const toneClass =
     tone === "violation"
@@ -141,13 +149,24 @@ function Stat({
       : tone === "review"
         ? "bg-review-soft text-review"
         : "bg-secondary text-secondary-foreground";
-  return (
-    <div className="surface-panel p-5">
+  const body = (
+    <>
       <span className={`flex size-9 items-center justify-center rounded-lg ${toneClass}`}>
         <Icon className="size-4.5" aria-hidden="true" />
       </span>
       <p className="mt-4 font-display text-3xl font-bold">{value}</p>
       <p className="text-sm text-muted-foreground">{label}</p>
-    </div>
+    </>
   );
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className="surface-panel block p-5 transition-all hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      >
+        {body}
+      </Link>
+    );
+  }
+  return <div className="surface-panel p-5">{body}</div>;
 }
