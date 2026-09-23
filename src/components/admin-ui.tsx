@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 
 export function PageHeader({
@@ -26,11 +27,13 @@ export function KpiCard({
   value,
   hint,
   tone = "default",
+  to,
 }: {
   label: string;
   value: number | string | undefined;
   hint?: string;
   tone?: "default" | "positive" | "warning" | "critical";
+  to?: string;
 }) {
   const toneClass =
     tone === "positive"
@@ -40,13 +43,24 @@ export function KpiCard({
         : tone === "critical"
           ? "text-destructive"
           : "text-foreground";
-  return (
-    <div className="surface-panel p-4">
+  const body = (
+    <>
       <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">{label}</p>
       <p className={cn("mt-2 font-display text-2xl font-bold tabular-nums", toneClass)}>{value ?? "—"}</p>
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
-    </div>
+    </>
   );
+  if (to) {
+    return (
+      <Link
+        to={to}
+        className="surface-panel block p-4 transition-all hover:-translate-y-0.5 hover:shadow-lift focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      >
+        {body}
+      </Link>
+    );
+  }
+  return <div className="surface-panel p-4">{body}</div>;
 }
 
 export function StatusPill({ status }: { status?: string | null }) {
