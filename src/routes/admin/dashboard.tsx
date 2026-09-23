@@ -39,22 +39,23 @@ function AdminDashboard() {
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <KpiCard label="Total users" value={s["total_users"]} />
-            <KpiCard label="Government users" value={s["government_users"]} />
-            <KpiCard label="Business users" value={s["business_users"]} />
-            <KpiCard label="Inspectors" value={s["inspectors"]} />
-            <KpiCard label="Organisations" value={s["organizations"]} hint="Government and business" />
-            <KpiCard label="Businesses" value={s["business_organizations"]} />
-            <KpiCard label="Products" value={s["products"]} />
-            <KpiCard label="Inspections" value={s["inspections"]} />
-            <KpiCard label="Compliant" value={s["compliant"]} tone="positive" />
-            <KpiCard label="Non-compliant" value={s["non_compliant"]} tone="critical" />
-            <KpiCard label="Pending reviews" value={s["pending_reviews"]} tone="warning" />
-            <KpiCard label="Open violations" value={s["open_violations"]} tone="warning" />
-            <KpiCard label="High-risk inspections" value={s["high_risk_inspections"]} tone="critical" />
-            <KpiCard label="Suspended accounts" value={s["suspended_accounts"]} tone="warning" />
-            <KpiCard label="Active organisations" value={s["active_organizations"]} tone="positive" />
-            <KpiCard label="Needs review" value={s["needs_review"]} tone="warning" />
+            <KpiCard label="Total users" value={s["total_users"]} to="/admin/users" />
+            <KpiCard label="Government users" value={s["government_users"]} to="/admin/government" />
+            <KpiCard label="Business users" value={s["business_users"]} to="/admin/business" />
+            <KpiCard label="Inspectors" value={s["inspectors"]} to="/admin/government" />
+            <KpiCard label="Organisations" value={s["organizations"]} hint="Government and business" to="/admin/overview" />
+            <KpiCard label="Businesses" value={s["business_organizations"]} to="/admin/business" />
+            <KpiCard label="Products" value={s["products"]} to="/admin/products" />
+            <KpiCard label="Inspections" value={s["inspections"]} to="/admin/inspections" />
+            <KpiCard label="Compliant" value={s["compliant"]} tone="positive" to="/admin/inspections" />
+            <KpiCard label="Non-compliant" value={s["non_compliant"]} tone="critical" to="/admin/inspections" />
+            <KpiCard label="Pending reviews" value={s["pending_reviews"]} tone="warning" to="/admin/inspections" />
+            <KpiCard label="Open violations" value={s["open_violations"]} tone="warning" to="/admin/inspections" />
+            <KpiCard label="High-risk inspections" value={s["high_risk_inspections"]} tone="critical" to="/admin/inspections" />
+            <KpiCard label="Suspended accounts" value={s["suspended_accounts"]} tone="warning" to="/admin/users" />
+            <KpiCard label="Active organisations" value={s["active_organizations"]} tone="positive" to="/admin/overview" />
+            <KpiCard label="Needs review" value={s["needs_review"]} tone="warning" to="/admin/inspections" />
+
           </div>
 
           <Panel title="Compliance split">
